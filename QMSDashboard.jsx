@@ -5288,10 +5288,10 @@ function LandingPage({onContinue}) {
       <div style={{flex:"0 0 45%",padding:"0 72px",zIndex:1}}>
         <ATCLogo width={165} dark={true}/>
         <h1 style={{color:"#fff",fontSize:38,fontWeight:800,margin:"34px 0 18px",lineHeight:1.18,letterSpacing:"-0.02em",maxWidth:480}}>
-          Continuous Improvement Register
+          Quality Management System
         </h1>
         <p style={{color:"rgba(255,255,255,0.70)",fontSize:15,lineHeight:1.72,marginBottom:38,maxWidth:410}}>
-          Raise a suggestion, track it through Initial Assessment, Planned Action(s), Summary and Follow-up, and see it reflected across the register and dashboard — all in one place.
+          Manage opportunities, track QMS approvals across FM-01A, FM-01B, FM-02, FM-03A and FM-04, and oversee clients, sites and project registers — all in one place.
         </p>
         <button
           onClick={onContinue}
@@ -5306,7 +5306,7 @@ function LandingPage({onContinue}) {
           onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.10)"}
           onMouseLeave={e=>e.currentTarget.style.background="transparent"}
         >
-          Continue <span style={{fontSize:17}}>→</span>
+          Enter QMS <span style={{fontSize:17}}>→</span>
         </button>
       </div>
 
@@ -5329,7 +5329,7 @@ function LandingPage({onContinue}) {
           }}>
             <div style={{textAlign:"center",color:"#fff",userSelect:"none",padding:"0 20px"}}>
               <div style={{fontSize:12,fontWeight:800,letterSpacing:"0.18em",textTransform:"uppercase",lineHeight:1.6,opacity:0.90}}>
-                CONTINUOUS<br/>IMPROVEMENT
+                QUALITY<br/>MANAGEMENT<br/>SYSTEM
               </div>
             </div>
           </div>
