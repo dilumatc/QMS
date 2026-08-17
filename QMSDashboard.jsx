@@ -5269,13 +5269,6 @@ function FM19NotesPage(){return <NotesPage title="FM-19 Notes" subtitle="Project
 // --- App root -----------------------------------------------------------------
 // --- Landing Page -------------------------------------------------------------
 function LandingPage({onContinue}) {
-  const bubble={
-    position:"absolute",
-    width:50,height:50,borderRadius:"50%",
-    background:"#fff",
-    display:"flex",alignItems:"center",justifyContent:"center",
-    boxShadow:"0 4px 20px rgba(0,0,0,0.28)",
-  };
   return (
     <div style={{
       minHeight:"100vh",width:"100%",
@@ -5284,13 +5277,12 @@ function LandingPage({onContinue}) {
       fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",
       overflow:"hidden",
     }}>
-      {/* Left */}
-      <div style={{flex:"0 0 45%",padding:"0 72px",zIndex:1}}>
+      <div style={{maxWidth:560,padding:"0 48px"}}>
         <ATCLogo width={165} dark={true}/>
-        <h1 style={{color:"#fff",fontSize:38,fontWeight:800,margin:"34px 0 18px",lineHeight:1.18,letterSpacing:"-0.02em",maxWidth:480}}>
+        <h1 style={{color:"#fff",fontSize:38,fontWeight:800,margin:"34px 0 18px",lineHeight:1.18,letterSpacing:"-0.02em"}}>
           Quality Management System
         </h1>
-        <p style={{color:"rgba(255,255,255,0.70)",fontSize:15,lineHeight:1.72,marginBottom:38,maxWidth:410}}>
+        <p style={{color:"rgba(255,255,255,0.70)",fontSize:15,lineHeight:1.72,marginBottom:38}}>
           Manage opportunities, track QMS approvals across FM-01A, FM-01B, FM-02, FM-03A and FM-04, and oversee clients, sites and project registers — all in one place.
         </p>
         <button
@@ -5308,44 +5300,6 @@ function LandingPage({onContinue}) {
         >
           Enter QMS <span style={{fontSize:17}}>→</span>
         </button>
-      </div>
-
-      {/* Right — circular diagram */}
-      <div style={{flex:"0 0 55%",display:"flex",alignItems:"center",justifyContent:"center"}}>
-        <div style={{position:"relative",width:370,height:370}}>
-          {/* Dashed outer ring */}
-          <div style={{position:"absolute",inset:0,borderRadius:"50%",border:"1.5px dashed rgba(255,255,255,0.32)"}}/>
-          {/* Inner dark circle with grid */}
-          <div style={{
-            position:"absolute",inset:46,borderRadius:"50%",
-            background:"#1A0004",
-            backgroundImage:[
-              "linear-gradient(rgba(170,31,46,0.22) 1px,transparent 1px)",
-              "linear-gradient(90deg,rgba(170,31,46,0.22) 1px,transparent 1px)",
-            ].join(","),
-            backgroundSize:"22px 22px",
-            display:"flex",alignItems:"center",justifyContent:"center",
-            boxShadow:"inset 0 0 80px rgba(0,0,0,0.5)",
-          }}>
-            <div style={{textAlign:"center",color:"#fff",userSelect:"none",padding:"0 20px"}}>
-              <div style={{fontSize:12,fontWeight:800,letterSpacing:"0.18em",textTransform:"uppercase",lineHeight:1.6,opacity:0.90}}>
-                QUALITY<br/>MANAGEMENT<br/>SYSTEM
-              </div>
-            </div>
-          </div>
-          {/* 12 o'clock — Users */}
-          <div style={{...bubble,top:0,left:"50%",transform:"translate(-50%,-50%)"}}>
-            <Users size={20} color={ATC.crimson}/>
-          </div>
-          {/* 3 o'clock — Sliders */}
-          <div style={{...bubble,top:"50%",right:0,transform:"translate(50%,-50%)"}}>
-            <SlidersHorizontal size={20} color={ATC.crimson}/>
-          </div>
-          {/* 6 o'clock — UserCog */}
-          <div style={{...bubble,bottom:0,left:"50%",transform:"translate(-50%,50%)"}}>
-            <UserCog size={20} color={ATC.crimson}/>
-          </div>
-        </div>
       </div>
     </div>
   );
