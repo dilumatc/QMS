@@ -36,16 +36,17 @@ func start         # http://localhost:7071/api/
 
 ### Frontend — `QMSDashboard.jsx`
 
-Single ~5,400-line React file containing all constants, mock data, page components, and the root `App`. `main.jsx` is the entry point; `index.html` references `/main.jsx` (not `/src/main.jsx`).
+Single ~5,900-line React file containing all constants, mock data, page components, and the root `App`. `main.jsx` is the entry point; `index.html` references `/main.jsx` (not `/src/main.jsx`).
 
 **App startup flow:**
 1. On load, `localStorage` is read and any previously submitted records are merged into the in-memory mock arrays (lines 16–21).
-2. `App` renders `<LandingPage>` first (`showLanding` state starts `true`). "Enter QMS →" sets it `false`.
-3. The main layout (sidebar + header + content) renders based on `nav` state.
+2. The main layout (sidebar + header + content) renders immediately based on `nav` state.
 
 **The frontend runs entirely on hardcoded mock data.** The `data/` directory has standalone mock JS modules (one per form/entity) that are already imported. To connect to the real API, set `const BASE_URL` and replace mock calls with `useEffect`/`fetch` per the pattern in `QMS_README.md`.
 
 **Form submission (`NewJobForm`)** is wired up: on submit it mutates `MOCK_OPPORTUNITIES` in-memory and writes to `localStorage` so records survive page refresh. It does **not** call the backend API yet.
+
+**FM02Form** (`SY-QS-FM-02 Go/No-Go Pre-Proposal Checklist`) is a full interactive form component inserted before `FM02Page`. It covers all 7 scored sections (Jurisdictional, Client Relationship, Market Drivers, Contractual/Commercial, Staff Resourcing), live score calculation against MAX 115, colour-coded GO/REVIEW/NO GO preliminary assessment badge, and an approvals table with 10 signatory roles. Triggered by the "New FM-02 Assessment" button on the `FM02Page` register using local `showForm` state — the same pattern used by `ClientsPage` (`NewClientForm`) and `ClientContactsPage` (`NewClientContactForm`).
 
 **Navigation** is driven by a single `nav` string in `App`. All forms follow the pattern `fm<N>` for the primary page and `fm<N>-<tab>` for sub-pages (notes, tasks, reviewers, etc.):
 

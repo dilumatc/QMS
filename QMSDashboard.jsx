@@ -5834,56 +5834,15 @@ function FM19ProjectClosurePage() {
 function FM19NotesPage(){return <NotesPage title="FM-19 Notes" subtitle="Project Closure Notes" data={MOCK_FM19_NOTES}/>;}
 
 // --- App root -----------------------------------------------------------------
-// --- Landing Page -------------------------------------------------------------
-function LandingPage({onContinue}) {
-  return (
-    <div style={{
-      minHeight:"100vh",width:"100%",
-      background:"radial-gradient(ellipse 130% 100% at 28% 52%, #C42233 0%, #8B1520 42%, #220408 100%)",
-      display:"flex",alignItems:"center",justifyContent:"center",
-      fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",
-      overflow:"hidden",
-    }}>
-      <div style={{maxWidth:560,padding:"0 48px"}}>
-        <ATCLogo width={165} dark={true}/>
-        <h1 style={{color:"#fff",fontSize:38,fontWeight:800,margin:"34px 0 18px",lineHeight:1.18,letterSpacing:"-0.02em"}}>
-          Quality Management System
-        </h1>
-        <p style={{color:"rgba(255,255,255,0.70)",fontSize:15,lineHeight:1.72,marginBottom:38}}>
-          Manage opportunities, track QMS approvals across FM-01A, FM-01B, FM-02, FM-03A and FM-04, and oversee clients, sites and project registers — all in one place.
-        </p>
-        <button
-          onClick={onContinue}
-          style={{
-            padding:"11px 28px",
-            border:"2px solid rgba(255,255,255,0.80)",
-            borderRadius:7,background:"transparent",color:"#fff",
-            fontSize:15,fontWeight:600,cursor:"pointer",
-            display:"inline-flex",alignItems:"center",gap:10,
-            letterSpacing:"0.01em",transition:"background 0.2s",
-          }}
-          onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.10)"}
-          onMouseLeave={e=>e.currentTarget.style.background="transparent"}
-        >
-          Enter QMS <span style={{fontSize:17}}>→</span>
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const [nav,setNav]=useState("dashboard");
   const [showForm,setShowForm]=useState(false);
   const [sidebarOpen,setSidebarOpen]=useState(false);
   const [profileOpen,setProfileOpen]=useState(false);
   const [isMobile,setIsMobile]=useState(window.innerWidth<1024);
-  const [showLanding,setShowLanding]=useState(true);
 
   useEffect(()=>{ const fn=()=>setIsMobile(window.innerWidth<1024); window.addEventListener("resize",fn); return ()=>window.removeEventListener("resize",fn); },[]);
   useEffect(()=>{ if(!profileOpen) return; const fn=(e)=>{ if(!e.target.closest("[data-profile]")) setProfileOpen(false); }; document.addEventListener("mousedown",fn); return ()=>document.removeEventListener("mousedown",fn); },[profileOpen]);
-
-  if(showLanding) return <LandingPage onContinue={()=>setShowLanding(false)}/>;
 
   return (
     <div style={{fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",background:ATC.bg,minHeight:"100vh"}}>
