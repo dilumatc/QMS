@@ -4618,9 +4618,9 @@ function FM02Page() {
   const [decisionFilter,setDecisionFilter]=useState("");
   const [showForm,setShowForm]=useState(false);
   const [selItem,setSelItem]=useState(null);
+  const masterMap=useMemo(()=>Object.fromEntries(MOCK_OPPORTUNITIES.map(o=>[o.id,o])),[]);
   if(showForm) return <FM02Form onBack={()=>setShowForm(false)}/>;
 
-  const masterMap=useMemo(()=>Object.fromEntries(MOCK_OPPORTUNITIES.map(o=>[o.id,o])),[]);
   const filtered=MOCK_FM02.filter(o=>{
     const m=masterMap[o.idMaster]||{};
     const s=search.toLowerCase().replace(/,/g,"");
