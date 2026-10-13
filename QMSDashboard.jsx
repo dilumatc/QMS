@@ -5877,10 +5877,15 @@ function AdminPage({onNavigate}) {
     <div>
       {showAdminResp&&<AdminResponsibilityPage onClose={()=>setShowAdminResp(false)}/>}
       <div style={{marginBottom:24}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
-          <div style={{width:4,height:24,background:ATC.crimson,borderRadius:2}}/>
-          <h1 style={{margin:0,fontSize:22,fontWeight:800,color:ATC.textDark,letterSpacing:"-0.02em"}}>Admin</h1>
-          <span style={{padding:"3px 10px",borderRadius:99,background:ATC.crimsonPale,color:ATC.crimsonDark,fontSize:11,fontWeight:700}}>System Administration</span>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{width:4,height:24,background:ATC.crimson,borderRadius:2}}/>
+            <h1 style={{margin:0,fontSize:22,fontWeight:800,color:ATC.textDark,letterSpacing:"-0.02em"}}>Admin</h1>
+            <span style={{padding:"3px 10px",borderRadius:99,background:ATC.crimsonPale,color:ATC.crimsonDark,fontSize:11,fontWeight:700}}>System Administration</span>
+          </div>
+          <button onClick={()=>onNavigate&&onNavigate("dashboard")} style={{display:"flex",alignItems:"center",gap:7,padding:"7px 16px",background:ATC.charcoal,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer"}}>
+            <LayoutDashboard size={14}/> QMS Dashboard
+          </button>
         </div>
         <p style={{margin:"0 0 0 12px",fontSize:13,color:ATC.textMuted}}>Manage users, settings and reference data for the QMS.</p>
       </div>
@@ -5954,7 +5959,6 @@ function AdminPage({onNavigate}) {
 export default function App() {
   const [nav,setNav]=useState("dashboard");
   const [showForm,setShowForm]=useState(false);
-  const [sidebarOpen,setSidebarOpen]=useState(false);
   const [profileOpen,setProfileOpen]=useState(false);
   const [isMobile,setIsMobile]=useState(window.innerWidth<1024);
   const [fm02Prefill,setFm02Prefill]=useState(null);
@@ -5964,12 +5968,9 @@ export default function App() {
 
   return (
     <div style={{fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",background:ATC.bg,minHeight:"100vh"}}>
-      <Sidebar active={nav} onNavigate={n=>{setNav(n);setShowForm(false);}} open={sidebarOpen||!isMobile} onClose={()=>setSidebarOpen(false)} isMobile={isMobile} onNewJob={()=>{setShowForm(true);setNav("dashboard");}}/>
-
-      <header style={{position:"fixed",top:0,left:isMobile?0:236,right:0,height:56,background:ATC.bgWhite,borderBottom:`3px solid ${ATC.crimson}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 22px",zIndex:30,boxShadow:"0 1px 6px rgba(0,0,0,0.07)"}}>
+      <header style={{position:"fixed",top:0,left:0,right:0,height:56,background:ATC.bgWhite,borderBottom:`3px solid ${ATC.crimson}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 22px",zIndex:30,boxShadow:"0 1px 6px rgba(0,0,0,0.07)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
-          {isMobile&&<button onClick={()=>setSidebarOpen(true)} style={{background:"none",border:"none",color:ATC.textDark,cursor:"pointer",display:"flex",padding:4}}><Menu size={20}/></button>}
-          {isMobile?<ATCLogo width={130}/>:<span style={{color:ATC.textMuted,fontSize:12}}>Quality Management System</span>}
+          <ATCLogo width={130}/>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
           <div style={{position:"relative",cursor:"pointer"}}>
@@ -6014,7 +6015,7 @@ export default function App() {
         </div>
       </header>
 
-      <main style={{marginLeft:isMobile?0:236,marginTop:56,padding:isMobile?"20px 14px":"28px 32px",minHeight:"calc(100vh - 56px)",background:showForm?"#E8E9ED":undefined}}>
+      <main style={{marginLeft:0,marginTop:56,padding:isMobile?"20px 14px":"28px 32px",minHeight:"calc(100vh - 56px)",background:showForm?"#E8E9ED":undefined}}>
         {showForm
           ? <NewJobForm onBack={()=>setShowForm(false)} isMobile={isMobile}/>
           : <>
