@@ -4060,7 +4060,7 @@ function FM02Form({onBack, prefillData}) {
   const p = prefillData||{};
   const empty = {
     // Section 1 — Opportunity Details
-    projectDescriptor:p.projectName||"", client:p.clientName||"", proposalManager:p.projectManagerName||"", office:p.officeForFormSubmission||"", serviceArea:"", scopeOfWork:"", estimatedFee:"", projectLocation:p.siteName||"",
+    projectDescriptor:p.projectName||"", client:p.clientName||"", proposalManager:p.projectManagerName||"", office:p.officeForFormSubmission||"", serviceArea:"", scopeOfWork:p.scopeOfWork||"", estimatedFee:p.estimatedProjectFeeValue||"", projectLocation:p.country||"",
     // Section 2 — Initial Triggers
     t_newClient:"", t_international:"", t_highConsequence:"", t_feeOver1M:"",
     // Section 3 — Mandatory Stop / Escalation
@@ -4154,9 +4154,9 @@ function FM02Form({onBack, prefillData}) {
       {opts.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   );
-  const Txt=({fk,rows=2,placeholder=""})=>(
-    <textarea value={form[fk]||""} onChange={e=>set(fk,e.target.value)} rows={rows} placeholder={placeholder}
-      style={{width:"100%",padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:ATC.textDark,background:ATC.bgWhite,outline:"none",resize:"vertical",boxSizing:"border-box"}}/>
+  const Txt=({fk,rows=2,placeholder="",readOnly=false})=>(
+    <textarea value={form[fk]||""} onChange={readOnly?undefined:e=>set(fk,e.target.value)} readOnly={readOnly} rows={rows} placeholder={placeholder}
+      style={{width:"100%",padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:ATC.textDark,background:readOnly?"#F5F6F8":ATC.bgWhite,outline:"none",resize:"vertical",boxSizing:"border-box",cursor:readOnly?"default":undefined}}/>
   );
   const Inp=({fk,placeholder="",readOnly=false})=>(
     <input value={form[fk]||""} onChange={readOnly?undefined:e=>set(fk,e.target.value)} readOnly={readOnly} placeholder={placeholder}
@@ -4249,7 +4249,7 @@ function FM02Form({onBack, prefillData}) {
           ))}
         </div>
         <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:4}}>Scope of Work <span style={{color:ATC.crimson}}>*</span></label>
-        <Txt fk="scopeOfWork" rows={4} placeholder="Provide a brief description of the scope of work sufficient to support understanding (minimum 2–3 sentences). Attach the RFP/RFQ and other key documents as appropriate."/>
+        <Txt fk="scopeOfWork" rows={4} readOnly={!!prefillData} placeholder="Provide a brief description of the scope of work sufficient to support understanding (minimum 2–3 sentences). Attach the RFP/RFQ and other key documents as appropriate."/>
       </div>
 
       {/* SECTION 2 — Initial Triggers */}
