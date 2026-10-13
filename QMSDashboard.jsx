@@ -4241,7 +4241,7 @@ function FM02Form({onBack, prefillData}) {
             </div>
           ))}
         </div>
-        <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:4}}>Scope of Work <span style={{color:ATC.crimson}}>*</span></label>
+        <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:4}}>Scope of Work</label>
         <Txt fk="scopeOfWork" rows={4} readOnly={!!prefillData} placeholder="Provide a brief description of the scope of work sufficient to support understanding (minimum 2–3 sentences). Attach the RFP/RFQ and other key documents as appropriate."/>
       </div>
 
