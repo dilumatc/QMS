@@ -4230,9 +4230,6 @@ function FM02Form({onBack, prefillData}) {
       {/* SECTION 1 — Opportunity Details */}
       <div style={secBox}>
         {secHdr("1","Opportunity Details","Pre-populated from FM-01A where available. Refer to the Opportunity Details (Form SY-QS-FM-01A) for additional information.")}
-        {prefillData&&<div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12,padding:"6px 12px",borderRadius:6,background:ATC.blueLight,border:`1px solid ${ATC.blue}33`}}>
-          <Lock size={12} color={ATC.blue}/><span style={{fontSize:11,color:ATC.blue,fontWeight:600}}>Fields pre-populated from FM-01A — read only. Edit in the originating FM-01A record.</span>
-        </div>}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px 20px",marginBottom:14}}>
           {[["projectDescriptor","Project Descriptor"],["client","Client"],["proposalManager","Proposal Manager"],["office","Office"],["serviceArea","Service Area"],["estimatedFee","Estimated Project Fee Value"],["projectLocation","Project Location / Country"]].map(([fk,label])=>(
             <div key={fk}>
