@@ -4613,14 +4613,14 @@ function FM02Form({onBack, prefillData}) {
 }
 
 // --- FM-02 Page ---------------------------------------------------------------
-function FM02Page({prefillItem, onClearPrefill}) {
+function FM02Page({prefillItem, onClearPrefill, onFormBack}) {
   const [page,setPage]=useState(1);
   const [search,setSearch]=useState("");
   const [decisionFilter,setDecisionFilter]=useState("");
   const [showForm,setShowForm]=useState(!!prefillItem);
   const [selItem,setSelItem]=useState(null);
   const masterMap=useMemo(()=>Object.fromEntries(MOCK_OPPORTUNITIES.map(o=>[o.id,o])),[]);
-  if(showForm) return <FM02Form onBack={()=>{setShowForm(false);if(onClearPrefill)onClearPrefill();}} prefillData={prefillItem}/>;
+  if(showForm) return <FM02Form onBack={()=>{setShowForm(false);if(onClearPrefill)onClearPrefill();if(onFormBack)onFormBack();}} prefillData={prefillItem}/>;
 
   const filtered=MOCK_FM02.filter(o=>{
     const m=masterMap[o.idMaster]||{};
@@ -5913,7 +5913,7 @@ export default function App() {
               {nav==="fm01b"           && <FM01BPage/>}
               {nav==="fm01b-notes"     && <FM01BNotesPage/>}
               {nav==="fm01b-tasks"     && <FM01BTasksPage/>}
-              {nav==="fm02"            && <FM02Page prefillItem={fm02Prefill} onClearPrefill={()=>setFm02Prefill(null)}/>}
+              {nav==="fm02"            && <FM02Page prefillItem={fm02Prefill} onClearPrefill={()=>setFm02Prefill(null)} onFormBack={fm02Prefill?()=>setNav("dashboard"):undefined}/>}
               {nav==="fm02-notes"      && <FM02NotesPage/>}
               {nav==="fm03a"           && <FM03APage/>}
               {nav==="fm03a-notes"     && <FM03ANotesPage/>}
