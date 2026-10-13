@@ -676,7 +676,7 @@ function RecordDetailModal({item,onClose,onNavigate}) {
 const PendingApprovalModal = RecordDetailModal;
 
 // --- Pending Approval — Workbook Detail Full Page -----------------------------
-function PendingWorkbookPage({item, onClose}) {
+function PendingWorkbookPage({item, onClose, onNavigate}) {
   const [showPdf, setShowPdf] = useState(false);
   // Look up related form records by master ID
   const fm01aRec = MOCK_FM01A.find(r=>r.idMaster===item.id);
@@ -1604,7 +1604,7 @@ function DashboardPage({summary,onNewJob,onNavigate}) {
   return <div>
     {showAdminResp&&<AdminResponsibilityPage onClose={()=>setShowAdminResp(false)}/>}
     {workbookItem&&<ProjectWorkbookDashboardPage item={workbookItem} onClose={()=>setWorkbookItem(null)}/>}
-    {selectedPendItem&&<PendingWorkbookPage item={selectedPendItem} onClose={()=>setSelectedPendItem(null)}/>}
+    {selectedPendItem&&<PendingWorkbookPage item={selectedPendItem} onClose={()=>setSelectedPendItem(null)} onNavigate={onNavigate}/>}
     {selectedMasterItem&&<RecordDetailModal item={selectedMasterItem} onClose={()=>setSelectedMasterItem(null)} onNavigate={onNavigate}/>}
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
       <PageTitle title="QMS"/>
