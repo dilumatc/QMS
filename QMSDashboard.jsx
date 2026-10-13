@@ -5,7 +5,7 @@ import {
   Bell, RefreshCw, Filter, CheckCircle, XCircle, AlertCircle, Circle,
   TrendingUp, Users, FileText, Layers, Search, Plus, ArrowLeft,
   Building2, Phone, Mail, Globe, ChevronDown,
-  MapPin, SlidersHorizontal, UserCog
+  MapPin, SlidersHorizontal, UserCog, Lock
 } from "lucide-react";
 import { MOCK_OPPORTUNITIES } from './data/mockOpportunities.js';
 import { MOCK_FM01A } from './data/mockFm01a.js';
@@ -4158,9 +4158,9 @@ function FM02Form({onBack, prefillData}) {
     <textarea value={form[fk]||""} onChange={e=>set(fk,e.target.value)} rows={rows} placeholder={placeholder}
       style={{width:"100%",padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:ATC.textDark,background:ATC.bgWhite,outline:"none",resize:"vertical",boxSizing:"border-box"}}/>
   );
-  const Inp=({fk,placeholder=""})=>(
-    <input value={form[fk]||""} onChange={e=>set(fk,e.target.value)} placeholder={placeholder}
-      style={{width:"100%",padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:ATC.textDark,background:ATC.bgWhite,outline:"none",boxSizing:"border-box"}}/>
+  const Inp=({fk,placeholder="",readOnly=false})=>(
+    <input value={form[fk]||""} onChange={readOnly?undefined:e=>set(fk,e.target.value)} readOnly={readOnly} placeholder={placeholder}
+      style={{width:"100%",padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:form[fk]?ATC.textDark:ATC.textMuted,background:readOnly?"#F5F6F8":ATC.bgWhite,outline:"none",boxSizing:"border-box",cursor:readOnly?"default":undefined}}/>
   );
   const TableHdr=()=>(
     <thead><tr style={{background:ATC.bg,borderBottom:`2px solid ${ATC.border}`}}>
@@ -4237,11 +4237,14 @@ function FM02Form({onBack, prefillData}) {
       {/* SECTION 1 — Opportunity Details */}
       <div style={secBox}>
         {secHdr("1","Opportunity Details","Pre-populated from FM-01A where available. Refer to the Opportunity Details (Form SY-QS-FM-01A) for additional information.")}
+        {prefillData&&<div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12,padding:"6px 12px",borderRadius:6,background:ATC.blueLight,border:`1px solid ${ATC.blue}33`}}>
+          <Lock size={12} color={ATC.blue}/><span style={{fontSize:11,color:ATC.blue,fontWeight:600}}>Fields pre-populated from FM-01A — read only. Edit in the originating FM-01A record.</span>
+        </div>}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px 20px",marginBottom:14}}>
           {[["projectDescriptor","Project Descriptor"],["client","Client"],["proposalManager","Proposal Manager"],["office","Office"],["serviceArea","Service Area"],["estimatedFee","Estimated Project Fee Value"],["projectLocation","Project Location / Country"]].map(([fk,label])=>(
             <div key={fk}>
               <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:4}}>{label}</label>
-              <Inp fk={fk} placeholder={`Enter ${label.toLowerCase()}...`}/>
+              <Inp fk={fk} placeholder={`Enter ${label.toLowerCase()}...`} readOnly={!!prefillData}/>
             </div>
           ))}
         </div>
