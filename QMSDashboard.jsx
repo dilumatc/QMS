@@ -547,7 +547,7 @@ function Sidebar({active,onNavigate,open,onClose,isMobile,onNewJob}) {
 }
 
 // --- Record Detail Modal (all 27 columns) -------------------------------------
-function RecordDetailModal({item,onClose}) {
+function RecordDetailModal({item,onClose,onNavigate}) {
   const closed = item.projectStatus===1||item.projectStatus==="1";
 
   const MS=({title,icon,children})=>(
@@ -746,27 +746,27 @@ function PendingWorkbookPage({item, onClose}) {
   const pct = countable?Math.round(completedCnt/countable*100):0;
 
   const ROWS=[
-    {label:"SY-QS-FM-01A",s:s01a,prereq:null},
-    {label:"SY-QS-FM-02", s:s02, prereq:null},
-    {label:"SY-QS-FM-03A",s:s03a,prereq:null},
-    {label:"SY-QS-FM-04", s:s04, prereq:null},
-    {label:"SY-QS-FM-01B",s:s01b,prereq:"FM-04 Completed"},
-    {label:"SY-QS-FM-03B",s:s03b,prereq:"FM-01B Completed"},
-    {label:"SY-QS-FM-05", s:s05, prereq:"FM-03B Completed"},
-    {label:"SY-QS-FM-06", s:s06, prereq:"FM-03B Completed"},
-    {label:"SY-QS-FM-07", s:s07, prereq:"FM-05, FM-06 Completed"},
-    {label:"SY-QS-FM-08", s:s08, prereq:"FM-05, FM-06 Completed"},
-    {label:"SY-QS-FM-09", s:s09, prereq:"FM-05, FM-06 Completed"},
-    {label:"SY-QS-FM-10", s:s10, prereq:null},
-    {label:"SY-QS-FM-11", s:s11, prereq:null},
-    {label:"SY-QS-FM-12", s:s12, prereq:null},
-    {label:"SY-QS-FM-13", s:s13, prereq:"FM-05, FM-06 Completed"},
-    {label:"SY-QS-FM-14", s:s14, prereq:"FM-05, FM-06 Completed"},
-    {label:"SY-QS-FM-15", s:s15, prereq:"FM-05, FM-06 Completed"},
-    {label:"SY-QS-FM-16", s:s16, prereq:"FM-05, FM-06 Completed"},
-    {label:"SY-QS-FM-17", s:s17, prereq:"FM-05, FM-06 Completed"},
-    {label:"SY-QS-FM-18", s:s18, prereq:"Not Applicable at this stage"},
-    {label:"SY-QS-FM-19", s:s19, prereq:null},
+    {label:"SY-QS-FM-01A",s:s01a,prereq:null,  navId:"fm01a"},
+    {label:"SY-QS-FM-02", s:s02, prereq:null,  navId:"fm02"},
+    {label:"SY-QS-FM-03A",s:s03a,prereq:null,  navId:"fm03a"},
+    {label:"SY-QS-FM-04", s:s04, prereq:null,  navId:"fm04"},
+    {label:"SY-QS-FM-01B",s:s01b,prereq:"FM-04 Completed",       navId:"fm01b"},
+    {label:"SY-QS-FM-03B",s:s03b,prereq:"FM-01B Completed",      navId:null},
+    {label:"SY-QS-FM-05", s:s05, prereq:"FM-03B Completed",      navId:"fm05"},
+    {label:"SY-QS-FM-06", s:s06, prereq:"FM-03B Completed",      navId:"fm06"},
+    {label:"SY-QS-FM-07", s:s07, prereq:"FM-05, FM-06 Completed",navId:"fm07"},
+    {label:"SY-QS-FM-08", s:s08, prereq:"FM-05, FM-06 Completed",navId:"fm08"},
+    {label:"SY-QS-FM-09", s:s09, prereq:"FM-05, FM-06 Completed",navId:"fm09"},
+    {label:"SY-QS-FM-10", s:s10, prereq:null,  navId:"fm10"},
+    {label:"SY-QS-FM-11", s:s11, prereq:null,  navId:"fm11"},
+    {label:"SY-QS-FM-12", s:s12, prereq:null,  navId:"fm12"},
+    {label:"SY-QS-FM-13", s:s13, prereq:"FM-05, FM-06 Completed",navId:"fm13"},
+    {label:"SY-QS-FM-14", s:s14, prereq:"FM-05, FM-06 Completed",navId:"fm14"},
+    {label:"SY-QS-FM-15", s:s15, prereq:"FM-05, FM-06 Completed",navId:"fm15"},
+    {label:"SY-QS-FM-16", s:s16, prereq:"FM-05, FM-06 Completed",navId:"fm16"},
+    {label:"SY-QS-FM-17", s:s17, prereq:"FM-05, FM-06 Completed",navId:"fm17"},
+    {label:"SY-QS-FM-18", s:s18, prereq:"Not Applicable at this stage",navId:"fm18"},
+    {label:"SY-QS-FM-19", s:s19, prereq:null,  navId:"fm19"},
   ];
 
   const Chk=()=><span style={{color:ATC.green,fontSize:15,fontWeight:900,lineHeight:1}}>✓</span>;
@@ -891,9 +891,13 @@ function PendingWorkbookPage({item, onClose}) {
                       const commenced=f.s===S.COMMENCED||f.s===S.SUBMITTED||f.s===S.COMPLETED;
                       const submitted=f.s===S.SUBMITTED||f.s===S.COMPLETED;
                       const completed=f.s===S.COMPLETED;
+                      const canNav=f.navId&&onNavigate;
                       return(
-                        <tr key={f.label} style={{borderBottom:`1px solid ${ATC.bg}`,background:bg}}>
-                          <td style={{padding:"7px 14px",fontWeight:600,color:ATC.textDark}}>{f.label}</td>
+                        <tr key={f.label} style={{borderBottom:`1px solid ${ATC.bg}`,background:bg,cursor:canNav?"pointer":undefined}}
+                          onClick={canNav?()=>{onClose();onNavigate(f.navId);}:undefined}
+                          onMouseEnter={canNav?e=>e.currentTarget.style.background=ATC.crimsonPale:undefined}
+                          onMouseLeave={canNav?e=>e.currentTarget.style.background=bg:undefined}>
+                          <td style={{padding:"7px 14px",fontWeight:700,color:canNav?ATC.crimson:ATC.textDark,textDecoration:canNav?"underline":undefined,textDecorationStyle:"dotted",textUnderlineOffset:3}}>{f.label}</td>
                           <td style={commenced?activeTd(bg):grayTd}>{commenced&&<Chk/>}</td>
                           <td style={submitted?activeTd(bg):grayTd}>{submitted&&<Chk/>}</td>
                           <td style={completed?activeTd(bg):grayTd}>{completed&&<Chk/>}</td>
@@ -1560,7 +1564,7 @@ function AdminResponsibilityPage({onClose}) {
 }
 
 // --- Dashboard Page -----------------------------------------------------------
-function DashboardPage({summary,onNewJob}) {
+function DashboardPage({summary,onNewJob,onNavigate}) {
   const [oppPage,setOppPage]=useState(1);
   const [appPage,setAppPage]=useState(1);
   const [oppSearch,setOppSearch]=useState("");
@@ -1601,7 +1605,7 @@ function DashboardPage({summary,onNewJob}) {
     {showAdminResp&&<AdminResponsibilityPage onClose={()=>setShowAdminResp(false)}/>}
     {workbookItem&&<ProjectWorkbookDashboardPage item={workbookItem} onClose={()=>setWorkbookItem(null)}/>}
     {selectedPendItem&&<PendingWorkbookPage item={selectedPendItem} onClose={()=>setSelectedPendItem(null)}/>}
-    {selectedMasterItem&&<RecordDetailModal item={selectedMasterItem} onClose={()=>setSelectedMasterItem(null)}/>}
+    {selectedMasterItem&&<RecordDetailModal item={selectedMasterItem} onClose={()=>setSelectedMasterItem(null)} onNavigate={onNavigate}/>}
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
       <PageTitle title="QMS"/>
       <div style={{display:"flex",alignItems:"center",gap:8,alignSelf:"flex-start"}}>
@@ -5937,7 +5941,7 @@ export default function App() {
         {showForm
           ? <NewJobForm onBack={()=>setShowForm(false)} isMobile={isMobile}/>
           : <>
-              {nav==="dashboard"    && <DashboardPage summary={MOCK_SUMMARY} onNewJob={()=>setShowForm(true)}/>}
+              {nav==="dashboard"    && <DashboardPage summary={MOCK_SUMMARY} onNewJob={()=>setShowForm(true)} onNavigate={setNav}/>}
               {nav==="qmsmaster"    && <QMSMasterPage/>}
               {nav==="clientcontacts"&&<ClientContactsPage isMobile={isMobile}/>}
               {nav==="clients"      && <ClientsPage isMobile={isMobile}/>}
