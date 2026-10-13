@@ -4226,14 +4226,6 @@ function FM02Form({onBack, prefillData}) {
         </div>}
       </div>
 
-      {/* Intro */}
-      <div style={{...secBox,background:ATC.blueLight,border:`1px solid ${ATC.blue}33`,marginBottom:16}}>
-        <p style={{margin:0,fontSize:13,color:ATC.blue,lineHeight:1.7}}>
-          <strong>Gate 0 — Go / No-Go Pre-Proposal Checklist.</strong> Answer honestly. Incomplete knowledge should trigger follow-up, not optimistic assumptions.
-          Mandatory gate failures (Section 3) must be escalated regardless of other responses. Conditional sections (4 and 5) appear based on triggers set in Section 2.
-          This form is part of ATC Williams' governance record. Re-assess if scope, fee, schedule or risk changes materially.
-        </p>
-      </div>
 
       {/* SECTION 1 — Opportunity Details */}
       <div style={secBox}>
