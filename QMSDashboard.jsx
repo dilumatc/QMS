@@ -214,10 +214,6 @@ const MOCK_FM19_NOTES=Array.from({length:50},(_,i)=>({id:i+1,idMaster:1500+i,gen
 
 const NAV_ITEMS = [
   {id:"dashboard",     label:"Dashboard",        icon:LayoutDashboard},
-  {id:"qmsmaster",     label:"QMS Master",       icon:Layers},
-  {id:"clientcontacts",label:"Client Contacts",  icon:Users},
-  {id:"clients",       label:"Clients",          icon:Building2},
-  {id:"sites",         label:"QMS Site Names",   icon:MapPin},
 ];
 const QMS_FORM_GROUPS = [
   {
@@ -531,8 +527,7 @@ function Sidebar({active,onNavigate,open,onClose,isMobile,onNewJob}) {
             <Icon size={15}/>{item.label}
           </button>;
         })}
-        {/* -- QMS Forms collapsible group -- */}
-        <QMSFormsNavGroup active={active} onNavigate={onNavigate} onClose={onClose} isMobile={isMobile}/>
+        {/* QMS Forms links moved to Admin page */}
       </nav>
       <div style={{padding:"14px 16px",borderTop:"1px solid rgba(255,255,255,0.08)",display:"flex",alignItems:"center",gap:10}}>
         <div style={{width:33,height:33,borderRadius:"50%",background:ATC.crimson,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:12,fontWeight:800,flexShrink:0}}>DF</div>
@@ -5860,11 +5855,18 @@ function FM19ProjectClosurePage() {
 function FM19NotesPage(){return <NotesPage title="FM-19 Notes" subtitle="Project Closure Notes" data={MOCK_FM19_NOTES}/>;}
 
 // --- Admin Page ---------------------------------------------------------------
-function AdminPage() {
+function AdminPage({onNavigate}) {
   const [showAdminResp,setShowAdminResp]=useState(false);
   const cardStyle={background:ATC.bgWhite,borderRadius:10,border:`1px solid ${ATC.border}`,padding:"20px 24px"};
-  const sections=[
-    {icon:<Users size={20} color={ATC.crimson}/>,title:"User Management",desc:"Manage system users, roles and access permissions.",items:["Add / remove users","Assign roles (Admin, Manager, Reviewer, Read-only)","Reset passwords"]},
+  const dataCards=[
+    {id:"qmsmaster",     icon:<Layers size={20} color={ATC.crimson}/>,    title:"QMS Master",      desc:"View and manage the master register of all QMS opportunities.", items:["All project records","Status and approval tracking","Opportunity overview"]},
+    {id:"clients",       icon:<Building2 size={20} color={ATC.crimson}/>, title:"Clients",         desc:"Manage client organisations registered in the QMS.",             items:["Client directory","Critical client flags","Client search and filter"]},
+    {id:"clientcontacts",icon:<Users size={20} color={ATC.crimson}/>,     title:"Client Contacts", desc:"Manage contacts associated with client organisations.",          items:["Contact directory","Link contacts to clients","Contact details"]},
+    {id:"sites",         icon:<MapPin size={20} color={ATC.crimson}/>,    title:"QMS Site Names",  desc:"Manage site names and locations used across QMS forms.",        items:["Site name register","Site location details","Site code management"]},
+    {id:"qmsforms",      icon:<FileText size={20} color={ATC.crimson}/>,  title:"QMS Forms",       desc:"Access all QMS form registers (FM-01 through FM-19).",          items:["All form registers","Form status overview","Quick navigation to any form"]},
+  ];
+  const comingSoon=[
+    {icon:<UserCog size={20} color={ATC.crimson}/>,title:"User Management",desc:"Manage system users, roles and access permissions.",items:["Add / remove users","Assign roles (Admin, Manager, Reviewer, Read-only)","Reset passwords"]},
     {icon:<Settings size={20} color={ATC.crimson}/>,title:"System Settings",desc:"Configure global QMS system parameters.",items:["Office locations","Currency and tax rules","Approval thresholds"]},
     {icon:<FileText size={20} color={ATC.crimson}/>,title:"Form Configuration",desc:"Manage form templates and field settings.",items:["Enable / disable form sections","Mandatory field rules","Default values"]},
     {icon:<Layers size={20} color={ATC.crimson}/>,title:"Reference Data",desc:"Maintain lookup lists used across all forms.",items:["Service areas","Project types","Commodity list","Staff list"]},
@@ -5882,6 +5884,33 @@ function AdminPage() {
         </div>
         <p style={{margin:"0 0 0 12px",fontSize:13,color:ATC.textMuted}}>Manage users, settings and reference data for the QMS.</p>
       </div>
+
+      {/* Data access section */}
+      <div style={{marginBottom:8}}>
+        <div style={{fontSize:11,fontWeight:700,color:ATC.textMuted,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:12}}>Data Access</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:16,marginBottom:24}}>
+          {dataCards.map(s=>(
+            <div key={s.id} style={cardStyle}>
+              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+                <div style={{width:36,height:36,borderRadius:8,background:ATC.crimsonPale,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{s.icon}</div>
+                <div>
+                  <div style={{fontWeight:800,fontSize:14,color:ATC.textDark}}>{s.title}</div>
+                  <div style={{fontSize:11,color:ATC.textMuted,marginTop:1}}>{s.desc}</div>
+                </div>
+              </div>
+              <ul style={{margin:0,padding:"0 0 0 16px",listStyle:"disc"}}>
+                {s.items.map(item=><li key={item} style={{fontSize:12,color:ATC.textMid,lineHeight:1.8}}>{item}</li>)}
+              </ul>
+              <button onClick={()=>onNavigate&&onNavigate(s.id)} style={{marginTop:14,width:"100%",padding:"7px 0",background:ATC.crimson,border:"none",borderRadius:6,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer"}}>
+                Open
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Admin Responsibility + system sections */}
+      <div style={{fontSize:11,fontWeight:700,color:ATC.textMuted,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:12}}>Administration</div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:16}}>
         {/* Admin Responsibility — live card */}
         <div style={cardStyle}>
@@ -5899,7 +5928,7 @@ function AdminPage() {
             Open
           </button>
         </div>
-        {sections.map(s=>(
+        {comingSoon.map(s=>(
           <div key={s.title} style={cardStyle}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
               <div style={{width:36,height:36,borderRadius:8,background:ATC.crimsonPale,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{s.icon}</div>
@@ -6055,7 +6084,7 @@ export default function App() {
               {nav==="fm18-notes"       && <FM18NotesPage/>}
               {nav==="fm19"             && <FM19ProjectClosurePage/>}
               {nav==="fm19-notes"       && <FM19NotesPage/>}
-              {nav==="admin"            && <AdminPage/>}
+              {nav==="admin"            && <AdminPage onNavigate={n=>setNav(n)}/>}
               {!["dashboard","qmsmaster","clientcontacts","opportunities","approvals","clients","sites","qmsforms","fm01a","fm01a-mc","fm01b-notes","fm01b-tasks","fm02","fm02-notes","fm03a","fm03a-notes","fm03b","fm03b-notes","fm04","fm04-notes","fm04-reviewers","fm04-revdocs","fm05","fm05-notes","fm05-scope","fm06","fm06-notes","fm06-milestones","fm06-categories","fm06-deliverables","fm06-extresources","fm07","fm07-main","fm07-notes","fm08","fm08-notes","fm09","fm09-notes","fm10","fm10-notes","fm11","fm11-costItems","fm11-notes","fm12","fm12-notes","fm13","fm13-template","fm13-notes","fm14","fm14-tasks","fm14-notes","fm15","fm15-drawsFigs","fm15-dataLoc","fm15-titleBlock","fm15-notes","fm16","fm16-reviewDocs","fm16-notes","fm17","fm17-docs","fm17-notes","fm18","fm18-uploads","fm18-notes","fm19","fm19-notes"].includes(nav)&&<PlaceholderPage title={NAV_ITEMS.find(n=>n.id===nav)?.label??QMS_FORMS.find(f=>f.id===nav)?.label??""}/>}
             </>
         }
