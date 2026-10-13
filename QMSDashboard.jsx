@@ -508,7 +508,7 @@ function QMSFormsNavGroup({active,onNavigate,onClose,isMobile}) {
   );
 }
 
-function Sidebar({active,onNavigate,open,onClose,isMobile,onNewJob,onAdmin}) {
+function Sidebar({active,onNavigate,open,onClose,isMobile,onNewJob}) {
   return <>
     {isMobile&&open&&<div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",zIndex:40}}/>}
     <aside style={{position:"fixed",top:0,left:0,bottom:0,width:236,background:ATC.charcoal,transform:(open||!isMobile)?"translateX(0)":"translateX(-100%)",transition:"transform 0.25s cubic-bezier(.4,0,.2,1)",zIndex:50,display:"flex",flexDirection:"column",overflowY:"auto"}}>
@@ -516,13 +516,10 @@ function Sidebar({active,onNavigate,open,onClose,isMobile,onNewJob,onAdmin}) {
         <ATCLogo width={190}/>
         {isMobile&&<button onClick={onClose} style={{background:"none",border:"none",color:ATC.textMuted,cursor:"pointer",padding:4,marginLeft:6,flexShrink:0}}><X size={16}/></button>}
       </div>
-      {/* New Job Request + Admin buttons */}
-      <div style={{padding:"14px 12px 6px",display:"flex",gap:6}}>
-        <button onClick={()=>{onNewJob();if(isMobile)onClose();}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px 8px",borderRadius:7,border:"none",background:ATC.crimson,color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700,boxShadow:`0 2px 8px ${ATC.crimson}44`}}>
-          <Plus size={14}/> New Jobs
-        </button>
-        <button onClick={()=>{if(onAdmin)onAdmin();if(isMobile)onClose();}} style={{flex:"0 0 auto",display:"flex",alignItems:"center",justifyContent:"center",gap:5,padding:"9px 12px",borderRadius:7,border:`1px solid ${ATC.border}`,background:ATC.bgWhite,color:ATC.textMid,cursor:"pointer",fontSize:12,fontWeight:700}}>
-          <Settings size={13}/> Admin
+      {/* New Job Request button */}
+      <div style={{padding:"14px 12px 6px"}}>
+        <button onClick={()=>{onNewJob();if(isMobile)onClose();}} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"9px 12px",borderRadius:7,border:"none",background:ATC.crimson,color:"#fff",cursor:"pointer",fontSize:13,fontWeight:700,boxShadow:`0 2px 8px ${ATC.crimson}44`}}>
+          <Plus size={15}/> New Jobs
         </button>
       </div>
       <div style={{padding:"10px 20px 6px",fontSize:9,fontWeight:800,color:ATC.crimson,textTransform:"uppercase",letterSpacing:"0.14em"}}>Navigation</div>
@@ -1567,7 +1564,7 @@ function AdminResponsibilityPage({onClose}) {
 }
 
 // --- Dashboard Page -----------------------------------------------------------
-function DashboardPage({summary,onNewJob,onNavigate}) {
+function DashboardPage({summary,onNewJob,onNavigate,onAdmin}) {
   const [oppPage,setOppPage]=useState(1);
   const [appPage,setAppPage]=useState(1);
   const [oppSearch,setOppSearch]=useState("");
@@ -1617,6 +1614,9 @@ function DashboardPage({summary,onNewJob,onNavigate}) {
         </button>
         <button onClick={onNewJob} style={{display:"flex",alignItems:"center",gap:7,padding:"9px 20px",background:ATC.crimson,color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 3px 10px ${ATC.crimson}55`}}>
           <Plus size={15}/> New Jobs
+        </button>
+        <button onClick={onAdmin} style={{display:"flex",alignItems:"center",gap:7,padding:"9px 18px",background:ATC.bgWhite,color:ATC.textMid,border:`1.5px solid ${ATC.border}`,borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer"}}>
+          <Settings size={15}/> Admin
         </button>
       </div>
     </div>
@@ -5922,7 +5922,7 @@ export default function App() {
 
   return (
     <div style={{fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",background:ATC.bg,minHeight:"100vh"}}>
-      <Sidebar active={nav} onNavigate={n=>{setNav(n);setShowForm(false);}} open={sidebarOpen||!isMobile} onClose={()=>setSidebarOpen(false)} isMobile={isMobile} onNewJob={()=>{setShowForm(true);setNav("dashboard");}} onAdmin={()=>{setNav("admin");setShowForm(false);}}/>
+      <Sidebar active={nav} onNavigate={n=>{setNav(n);setShowForm(false);}} open={sidebarOpen||!isMobile} onClose={()=>setSidebarOpen(false)} isMobile={isMobile} onNewJob={()=>{setShowForm(true);setNav("dashboard");}}/>
 
       <header style={{position:"fixed",top:0,left:isMobile?0:236,right:0,height:56,background:ATC.bgWhite,borderBottom:`3px solid ${ATC.crimson}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 22px",zIndex:30,boxShadow:"0 1px 6px rgba(0,0,0,0.07)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
@@ -5976,7 +5976,7 @@ export default function App() {
         {showForm
           ? <NewJobForm onBack={()=>setShowForm(false)} isMobile={isMobile}/>
           : <>
-              {nav==="dashboard"    && <DashboardPage summary={MOCK_SUMMARY} onNewJob={()=>setShowForm(true)} onNavigate={(navId,data)=>{setNav(navId);if(navId==="fm02")setFm02Prefill(data||null);}}/>}
+              {nav==="dashboard"    && <DashboardPage summary={MOCK_SUMMARY} onNewJob={()=>setShowForm(true)} onNavigate={(navId,data)=>{setNav(navId);if(navId==="fm02")setFm02Prefill(data||null);}} onAdmin={()=>setNav("admin")}/>}
               {nav==="qmsmaster"    && <QMSMasterPage/>}
               {nav==="clientcontacts"&&<ClientContactsPage isMobile={isMobile}/>}
               {nav==="clients"      && <ClientsPage isMobile={isMobile}/>}
