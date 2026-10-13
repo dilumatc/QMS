@@ -4617,6 +4617,7 @@ function FM02Page() {
   const [search,setSearch]=useState("");
   const [decisionFilter,setDecisionFilter]=useState("");
   const [showForm,setShowForm]=useState(false);
+  const [selItem,setSelItem]=useState(null);
   if(showForm) return <FM02Form onBack={()=>setShowForm(false)}/>;
 
   const masterMap=useMemo(()=>Object.fromEntries(MOCK_OPPORTUNITIES.map(o=>[o.id,o])),[]);
@@ -4629,7 +4630,6 @@ function FM02Page() {
   });
   const items=[...filtered].sort((a,b)=>b.id-a.id).slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);
   const totalPages=Math.ceil(filtered.length/PAGE_SIZE);
-  const [selItem,setSelItem]=useState(null);
   return <div>
     {selItem&&<GenericDetailModal item={selItem} badge="FM-02" title="SY-QS-FM-02" onClose={()=>setSelItem(null)}/>}
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:18,flexWrap:"wrap",gap:10}}>
