@@ -4050,109 +4050,152 @@ function FM01APage() {
     ];})} page={page} totalPages={totalPages} onChange={setPage} total={filtered.length}/>;
 }
 
-// --- FM-02 Form (SY-QS-FM-02 Go/No-Go Pre-Proposal Checklist) ----------------
+// --- FM-02 Form (SY-QS-FM-02 Go/No-Go Pre-Proposal Checklist — Focus Group REV A) ---
 function FM02Form({onBack}) {
   const STAFF = ["Zoran Kovacev","Colin Jenner","Tony Marszalek","Kathy Tehrani","Alex Arroyo","Dilum Fernando","Ralph Holding","Craig Noske","Peter Reid","Phillip Soden","Mal Jones","Michael Munro","Nick Brown","Rowan Cossins","Dylan Rubinstein","Makaela McGrath","Dayjil Buhle","Joel Eadie"];
   const empty = {
-    scopeOfWork:"",
-    s2_1:"",s2_2:"",s2_3:"",
-    s2_1_act:"",s2_2_act:"",s2_3_act:"",
-    s3_1:"",s3_2:"",s3_3:"",s3_4:"",s3_5:"",s3_6:"",s3_7:"",
-    s3_1_act:"",s3_3_act:"",s3_4_act:"",s3_5_act:"",s3_6_act:"",s3_7_act:"",
-    s4_1:"",s4_2:"",s4_3:"",s4_4:"",s4_5:"",
-    s4_1_act:"",s4_2_act:"",s4_3_act:"",s4_4_act:"",
-    s5_1:"",s5_2:"",s5_3:"",s5_4:"",s5_5:"",s5_6:"",s5_7:"",
-    s5_2_act:"",s5_4_act:"",s5_7_act:"",
-    s6_1:"",s6_2:"",s6_3:"",s6_4:"",s6_5:"",s6_6:"",s6_7:"",s6_8:"",
-    s6_1_act:"",s6_5_act:"",s6_6_act:"",s6_8_act:"",
-    s7_1:"",s7_2:"",s7_3:"",s7_4:"",s7_5:"",s7_6:"",s7_7:"",s7_8:"",s7_9:"",
-    s7_5_act:"",s7_6_act:"",s7_8_act:"",s7_9_act:"",
-    appr_pm:"",appr_projm:"",appr_pd:"",appr_om:"",appr_rm:"",appr_intl:"",appr_hsew:"",appr_bm:"",appr_cto:"",appr_ceo:"",
+    // Section 1 — Opportunity Details
+    projectDescriptor:"", client:"", proposalManager:"", office:"", serviceArea:"", scopeOfWork:"", estimatedFee:"", projectLocation:"",
+    // Section 2 — Initial Triggers
+    t_newClient:"", t_international:"", t_highConsequence:"", t_feeOver1M:"",
+    // Section 3 — Mandatory Stop / Escalation
+    s3_1:"",s3_1_act:"", s3_2:"",s3_2_act:"", s3_3:"",s3_3_act:"",
+    // Section 4a — Client Due Diligence (new client)
+    s4a_1:"",s4a_1_act:"", s4a_2:"",s4a_2_act:"",
+    // Section 4b — Client Relationship (existing client)
+    s4b_1:"",s4b_1_act:"", s4b_2:"",s4b_2_act:"", s4b_3:"",s4b_3_act:"", s4b_4:"",s4b_4_act:"",
+    // Section 5 — International Review (conditional)
+    s5_1:"", s5_2:"", s5_3:"",s5_3_act:"", s5_4:"",s5_4_act:"", s5_5:"",s5_5_act:"", s5_6:"",s5_6_act:"", s5_7:"",s5_7_act:"", s5_8:"",s5_8_act:"", s5_9:"",s5_9_act:"",
+    // Section 6 — Market & Strategic Review
+    s6_1:"",s6_1_act:"", s6_2:"", s6_3:"",s6_3_act:"",
+    // Section 7 — Technical & Capability Review
+    s7_1:"",s7_1_act:"", s7_2:"",s7_2_act:"", s7_3:"",s7_3_act:"", s7_4:"",s7_4_act:"", s7_5:"",s7_5_act:"",
+    // Section 8 — Commercial, Contractual, Financial & Legal
+    s8_1:"",s8_1_act:"", s8_2:"",s8_2_act:"", s8_3:"",s8_3_act:"", s8_4:"",s8_4_act:"", s8_5:"",s8_5_act:"", s8_6:"",s8_6_act:"", s8_7:"",s8_7_act:"",
+    // Section 10 — Decision & Approval
+    omDecision:"", omComments:"", appr_om:"", appr_pm:"",
   };
   const [form,setForm]=useState(empty);
   const [saving,setSaving]=useState(false);
   const [saved,setSaved]=useState(false);
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
 
-  // Score = sum of all numeric section 3-7 responses
-  const score=useMemo(()=>{
-    const keys=["s3_2","s3_3","s3_5","s3_6","s3_7","s4_1","s4_2","s4_3","s4_4","s4_5","s5_1","s5_2","s5_3","s5_4","s5_5","s5_6","s5_7","s6_1","s6_2","s6_3","s6_4","s6_5","s6_6","s6_7","s6_8","s7_2","s7_4","s7_7","s7_8","s7_9"];
-    return keys.reduce((t,k)=>t+(parseFloat(form[k])||0),0);
-  },[form]);
-  const MAX=115;
-  const assessment=score>=90?"GO":score>=70?"REVIEW":"NO GO";
-  const assessColor=assessment==="GO"?ATC.green:assessment==="REVIEW"?ATC.amber:ATC.crimsonDark;
-  const assessBg=assessment==="GO"?ATC.greenLight:assessment==="REVIEW"?ATC.amberLight:ATC.crimsonPale;
+  // Derived trigger flags
+  const isNewClient   = form.t_newClient==="Yes";
+  const isExisting    = form.t_newClient==="No";
+  const isIntl        = form.t_international==="Yes"||form.t_international==="Unknown";
+  const isHighConseq  = form.t_highConsequence==="Yes"||form.t_highConsequence==="Unknown";
+  const isFeeOver1M   = form.t_feeOver1M==="Yes";
 
-  // Shared style helpers
+  // Flagged responses → escalation triggers
+  const flags = useMemo(()=>{
+    const f=form;
+    return {
+      coi: f.s3_1==="Yes"||f.s3_1==="Unknown",
+      legal: f.s3_2==="Yes"||f.s3_2==="Unknown",
+      hse: f.s3_3==="Yes"||f.s3_3==="Unknown",
+      payment: f.s4b_1==="Poor track record of payment"||f.s4b_1==="Unknown",
+      disputes: f.s4b_2==="Known history of disputes or consultant issues"||f.s4b_2==="Significant unresolved concerns",
+      ddNotDone: isNewClient&&(f.s4a_1==="No"||f.s4a_1==="Unknown"),
+      travelReq: f.s5_3==="Yes",
+      travelRisk: f.s5_5==="Reconsider need to travel"||f.s5_5==="Do not travel",
+      hseRisk: f.s5_8==="Concerns requiring mitigation"||f.s5_8==="Unacceptable or unmanaged risk identified",
+      highConseqStr: f.s7_4==="Yes - Review only"||f.s7_4==="Yes - Design/construction/EoR]",
+      eor: f.s7_5==="Yes"||f.s7_5==="Unknown",
+      lowResources: f.s7_1==="Subconsultants for >50% of project value",
+      capGap: f.s7_2==="Capability gap requires external support"||f.s7_2==="Capability gap not addressed",
+      unavail: f.s7_3==="Resources unavailable",
+      highCommercial: f.s8_3==="High commercial risk",
+      sigReputational: f.s8_6==="Significant reputational risk",
+      contractualExp: f.s8_5==="Yes – requires review / escalation"||f.s8_5==="Unknown",
+    };
+  },[form,isNewClient]);
+
+  // Auto-generate escalation list
+  const escalations = useMemo(()=>{
+    const e=[];
+    if(flags.coi||flags.hse||flags.legal||isFeeOver1M||flags.contractualExp||flags.sigReputational)
+      e.push({role:"Chief Executive Officer (CEO)",reasons:[flags.coi?"COI identified":"",flags.hse?"HSE/integrity concern":"",isFeeOver1M?"Fee > $1M":"",flags.contractualExp?"Contractual exposure identified":"",flags.sigReputational?"Significant reputational risk":""].filter(Boolean)});
+    if(isHighConseq||flags.highConseqStr||flags.eor||flags.sigReputational)
+      e.push({role:"Chief Technical Officer (CTO)",reasons:[isHighConseq?"High-consequence services":"",flags.highConseqStr?"High-consequence structures":"",flags.eor?"EoR/DoR required":"",flags.sigReputational?"Significant reputational risk":""].filter(Boolean)});
+    if(flags.payment||flags.disputes||flags.highCommercial||flags.sigReputational||flags.contractualExp)
+      e.push({role:"Business Manager",reasons:[flags.payment?"Poor track record of payment":"",flags.disputes?"Client dispute history":"",flags.highCommercial?"High commercial risk":"",flags.sigReputational?"Significant reputational risk":"",flags.contractualExp?"Contractual exposure":""].filter(Boolean)});
+    if(isIntl)
+      e.push({role:"International Manager",reasons:["International opportunity triggered"]});
+    if(isIntl&&(flags.travelReq||flags.hseRisk))
+      e.push({role:"HSEW Manager",reasons:[flags.travelReq?"International travel required":"",flags.hseRisk?"HSE/security risks identified":""].filter(Boolean)});
+    if(flags.eor)
+      e.push({role:"Contract Manager",reasons:["EoR/DoR role identified"]});
+    if(e.length===0) e.push({role:"None",reasons:["-"]});
+    return e;
+  },[flags,isIntl,isHighConseq,isFeeOver1M]);
+
+  const anyFlag=Object.values(flags).some(Boolean);
   const secBox={background:ATC.bgWhite,borderRadius:10,border:`1px solid ${ATC.border}`,padding:"20px 24px",marginBottom:16};
-  const secHdr=(n,t,sub)=>(
+  const secHdr=(n,t,sub,conditional)=>(
     <div style={{marginBottom:14,paddingBottom:12,borderBottom:`2px solid ${ATC.crimsonPale}`}}>
-      <div style={{display:"flex",alignItems:"center",gap:8}}>
+      <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
         <span style={{padding:"2px 10px",borderRadius:6,background:ATC.crimson,color:"#fff",fontSize:11,fontWeight:800}}>{n}</span>
         <h3 style={{margin:0,fontSize:14,fontWeight:800,color:ATC.textDark}}>{t}</h3>
+        {conditional&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:99,background:ATC.amberLight,color:ATC.amber,fontWeight:700,border:`1px solid ${ATC.amber}44`}}>{conditional}</span>}
       </div>
-      {sub&&<p style={{margin:"4px 0 0 44px",fontSize:11,color:ATC.textMuted,lineHeight:1.5}}>{sub}</p>}
+      {sub&&<p style={{margin:"4px 0 0 44px",fontSize:11,color:ATC.textMuted,lineHeight:1.6}}>{sub}</p>}
     </div>
   );
   const Sel=({fk,opts,placeholder="Select..."})=>(
     <select value={form[fk]||""} onChange={e=>set(fk,e.target.value)}
       style={{width:"100%",padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:form[fk]?ATC.textDark:ATC.textMuted,background:ATC.bgWhite,outline:"none"}}>
       <option value="">{placeholder}</option>
-      {opts.map(([v,l])=><option key={v} value={v}>{l}</option>)}
+      {opts.map(o=><option key={o} value={o}>{o}</option>)}
     </select>
   );
   const Txt=({fk,rows=2,placeholder=""})=>(
     <textarea value={form[fk]||""} onChange={e=>set(fk,e.target.value)} rows={rows} placeholder={placeholder}
       style={{width:"100%",padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:ATC.textDark,background:ATC.bgWhite,outline:"none",resize:"vertical",boxSizing:"border-box"}}/>
   );
-  const GateRow=({num,label,fk,actFk,actHint})=>(
-    <tr style={{borderBottom:`1px solid ${ATC.bg}`}}>
-      <td style={{padding:"10px 12px",color:ATC.crimson,fontWeight:800,fontSize:12,width:40,verticalAlign:"top"}}>{num}</td>
-      <td style={{padding:"10px 12px",fontSize:13,color:ATC.textDark,verticalAlign:"top",width:"40%"}}>{label}</td>
-      <td style={{padding:"10px 12px",verticalAlign:"top",width:"15%"}}>
-        <Sel fk={fk} opts={[["YES","YES"],["NO","NO"],["UNKNOWN","UNKNOWN"]]}/>
-        {form[fk]==="YES"||form[fk]==="UNKNOWN"?<span style={{fontSize:10,color:ATC.crimsonDark,fontWeight:600,marginTop:3,display:"block"}}>⚠ Escalation required</span>:null}
-      </td>
-      <td style={{padding:"10px 12px",verticalAlign:"top"}}>
-        {actFk&&<Txt fk={actFk} rows={2} placeholder={actHint||"Actions identified..."}/>}
-        {!actFk&&<span style={{fontSize:11,color:ATC.textMuted}}>{actHint}</span>}
-      </td>
-    </tr>
-  );
-  const ScoreRow=({num,label,fk,opts,actFk,actHint,scoreNote})=>(
-    <tr style={{borderBottom:`1px solid ${ATC.bg}`}}>
-      <td style={{padding:"10px 12px",color:ATC.crimson,fontWeight:800,fontSize:12,width:40,verticalAlign:"top"}}>{num}</td>
-      <td style={{padding:"10px 12px",fontSize:13,color:ATC.textDark,verticalAlign:"top",width:"38%"}}>{label}</td>
-      <td style={{padding:"10px 12px",verticalAlign:"top",width:"18%"}}>
-        <Sel fk={fk} opts={opts}/>
-        {form[fk]!==""&&<span style={{fontSize:11,color:parseFloat(form[fk])<0?ATC.crimsonDark:ATC.green,fontWeight:700,marginTop:3,display:"block"}}>Score: {parseFloat(form[fk])>=0?"+":""}{form[fk]}</span>}
-      </td>
-      <td style={{padding:"10px 12px",verticalAlign:"top"}}>
-        {actFk?<Txt fk={actFk} rows={2} placeholder={actHint||"Actions identified..."}/>:<span style={{fontSize:11,color:ATC.textMuted,lineHeight:1.5,display:"block"}}>{actHint}</span>}
-        {scoreNote&&<span style={{fontSize:10,color:ATC.textMuted,marginTop:2,display:"block"}}>{scoreNote}</span>}
-      </td>
-    </tr>
+  const Inp=({fk,placeholder=""})=>(
+    <input value={form[fk]||""} onChange={e=>set(fk,e.target.value)} placeholder={placeholder}
+      style={{width:"100%",padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:ATC.textDark,background:ATC.bgWhite,outline:"none",boxSizing:"border-box"}}/>
   );
   const TableHdr=()=>(
     <thead><tr style={{background:ATC.bg,borderBottom:`2px solid ${ATC.border}`}}>
       {["#","Consideration","Response","Actions Identified"].map(h=><th key={h} style={{padding:"9px 12px",textAlign:"left",fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.05em"}}>{h}</th>)}
     </tr></thead>
   );
+  const Row=({num,label,fk,opts,actFk,actHint,flagged})=>{
+    const isFlagged=flagged||false;
+    return (
+      <tr style={{borderBottom:`1px solid ${ATC.bg}`,background:isFlagged?ATC.crimsonPale:undefined}}>
+        <td style={{padding:"10px 12px",color:ATC.crimson,fontWeight:800,fontSize:12,width:38,verticalAlign:"top"}}>{num}</td>
+        <td style={{padding:"10px 12px",fontSize:13,color:ATC.textDark,verticalAlign:"top",width:"38%"}}>{label}</td>
+        <td style={{padding:"10px 12px",verticalAlign:"top",width:"19%"}}>
+          <Sel fk={fk} opts={opts}/>
+          {isFlagged&&<span style={{fontSize:10,color:ATC.crimsonDark,fontWeight:600,marginTop:3,display:"block"}}>⚠ Escalation required</span>}
+        </td>
+        <td style={{padding:"10px 12px",verticalAlign:"top"}}>
+          {actFk?<Txt fk={actFk} rows={2} placeholder={actHint||"Actions identified..."}/>:
+           <span style={{fontSize:11,color:ATC.textMuted,lineHeight:1.5,display:"block"}}>{actHint}</span>}
+        </td>
+      </tr>
+    );
+  };
 
-  async function handleSave() {
+  async function handleSave(){
     setSaving(true);
     await new Promise(r=>setTimeout(r,900));
     setSaving(false); setSaved(true);
   }
 
+  const omDecColor = form.omDecision==="Go"?ATC.green:form.omDecision==="No Go"?ATC.crimsonDark:ATC.amber;
+  const omDecBg    = form.omDecision==="Go"?ATC.greenLight:form.omDecision==="No Go"?ATC.crimsonPale:ATC.amberLight;
+
   if(saved) return (
     <div style={{minHeight:"60vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:16,textAlign:"center",padding:32}}>
-      <div style={{width:64,height:64,borderRadius:"50%",background:assessBg,display:"flex",alignItems:"center",justifyContent:"center"}}>
-        {assessment==="GO"?<CheckCircle size={32} color={assessColor}/>:assessment==="REVIEW"?<AlertCircle size={32} color={assessColor}/>:<XCircle size={32} color={assessColor}/>}
+      <div style={{width:64,height:64,borderRadius:"50%",background:omDecBg,display:"flex",alignItems:"center",justifyContent:"center"}}>
+        {form.omDecision==="Go"?<CheckCircle size={32} color={omDecColor}/>:form.omDecision==="No Go"?<XCircle size={32} color={omDecColor}/>:<AlertCircle size={32} color={omDecColor}/>}
       </div>
-      <h2 style={{margin:0,fontSize:22,fontWeight:800,color:ATC.textDark}}>FM-02 Submitted — {assessment}</h2>
-      <p style={{margin:0,fontSize:14,color:ATC.textMuted,maxWidth:420}}>Score {score} / {MAX}. {assessment==="GO"?"Proceed to proposal.":assessment==="REVIEW"?"Review required before proceeding.":"Escalation required before proceeding."}</p>
+      <h2 style={{margin:0,fontSize:22,fontWeight:800,color:ATC.textDark}}>FM-02 Submitted — {form.omDecision||"Pending OM Decision"}</h2>
+      <p style={{margin:0,fontSize:14,color:ATC.textMuted,maxWidth:440}}>Form submitted and sent to Operations Manager and required specialist reviewers for review and sign-off.</p>
       <div style={{display:"flex",gap:10}}>
         <button onClick={()=>{setForm(empty);setSaved(false);}} style={{padding:"9px 20px",background:ATC.bgWhite,border:`1px solid ${ATC.border}`,borderRadius:7,fontSize:13,color:ATC.textMid,cursor:"pointer",fontWeight:500}}>New Assessment</button>
         <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:8,padding:"9px 22px",background:ATC.crimson,color:"#fff",border:"none",borderRadius:7,fontSize:13,fontWeight:700,cursor:"pointer"}}><ArrowLeft size={15}/> Back</button>
@@ -4170,332 +4213,387 @@ function FM02Form({onBack}) {
             <h1 style={{margin:0,fontSize:20,fontWeight:800,color:ATC.textDark,letterSpacing:"-0.02em"}}>SY-QS-FM-02</h1>
             <span style={{padding:"3px 10px",borderRadius:99,background:ATC.crimsonPale,color:ATC.crimsonDark,fontSize:11,fontWeight:700}}>Gate 0</span>
           </div>
-          <p style={{margin:"2px 0 0",fontSize:12,color:ATC.textMuted}}>Go / No-Go Pre-Proposal Checklist — REV A</p>
+          <p style={{margin:"2px 0 0",fontSize:12,color:ATC.textMuted}}>Go / No-Go Pre-Proposal Checklist — REV A (Focus Group Revised)</p>
         </div>
-        {/* Live score pill */}
-        <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:10}}>
-          <div style={{background:assessBg,color:assessColor,borderRadius:8,padding:"8px 18px",textAlign:"center",fontWeight:800,fontSize:13,border:`1px solid ${assessColor}33`}}>
-            {assessment} — {score} / {MAX}
-          </div>
-        </div>
+        {anyFlag&&<div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:7,padding:"7px 14px",borderRadius:8,background:ATC.crimsonPale,border:`1px solid ${ATC.crimsonDark}33`}}>
+          <AlertCircle size={14} color={ATC.crimsonDark}/><span style={{fontSize:12,color:ATC.crimsonDark,fontWeight:700}}>Escalations required — see Section 9</span>
+        </div>}
       </div>
 
-      {/* Intro notice */}
+      {/* Intro */}
       <div style={{...secBox,background:ATC.blueLight,border:`1px solid ${ATC.blue}33`,marginBottom:16}}>
-        <p style={{margin:0,fontSize:13,color:ATC.blue,lineHeight:1.65}}>
-          <strong>Gate 0 — Go / No-Go Pre-Proposal Checklist.</strong> Complete honestly. Incomplete knowledge should trigger follow-up, not optimistic assumptions.
-          Mandatory gate failures (Section 2) must be escalated regardless of total score.
-          This worksheet forms part of ATC Williams' governance record. Re-assess if scope, fee, schedule, or risk changes materially.
+        <p style={{margin:0,fontSize:13,color:ATC.blue,lineHeight:1.7}}>
+          <strong>Gate 0 — Go / No-Go Pre-Proposal Checklist.</strong> Answer honestly. Incomplete knowledge should trigger follow-up, not optimistic assumptions.
+          Mandatory gate failures (Section 3) must be escalated regardless of other responses. Conditional sections (4 and 5) appear based on triggers set in Section 2.
+          This form is part of ATC Williams' governance record. Re-assess if scope, fee, schedule or risk changes materially.
         </p>
       </div>
 
-      {/* Section 1 */}
+      {/* SECTION 1 — Opportunity Details */}
       <div style={secBox}>
-        {secHdr("1","Opportunity Details","Refer to Form SY-QS-FM-01A for additional opportunity information.")}
-        <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.05em",display:"block",marginBottom:6}}>1.1 Scope of Work <span style={{color:ATC.crimson}}>*</span></label>
-        <Txt fk="scopeOfWork" rows={4} placeholder="Provide a brief description of the scope of work sufficient to support Go/No-Go assessment (minimum 2–3 sentences). Attach the RFP/RFQ and key documents as appropriate."/>
+        {secHdr("1","Opportunity Details","Pre-populated from FM-01A where available. Refer to the Opportunity Details (Form SY-QS-FM-01A) for additional information.")}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px 20px",marginBottom:14}}>
+          {[["projectDescriptor","Project Descriptor"],["client","Client"],["proposalManager","Proposal Manager"],["office","Office"],["serviceArea","Service Area"],["estimatedFee","Estimated Project Fee Value"],["projectLocation","Project Location / Country"]].map(([fk,label])=>(
+            <div key={fk}>
+              <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:4}}>{label}</label>
+              <Inp fk={fk} placeholder={`Enter ${label.toLowerCase()}...`}/>
+            </div>
+          ))}
+        </div>
+        <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:4}}>Scope of Work <span style={{color:ATC.crimson}}>*</span></label>
+        <Txt fk="scopeOfWork" rows={4} placeholder="Provide a brief description of the scope of work sufficient to support understanding (minimum 2–3 sentences). Attach the RFP/RFQ and other key documents as appropriate."/>
       </div>
 
-      {/* Section 2 — Mandatory Gate */}
+      {/* SECTION 2 — Initial Triggers */}
       <div style={secBox}>
-        {secHdr("2","Mandatory Gate Questions","These questions are not scored. A YES or UNKNOWN response cannot proceed without documented review, mitigation and approval by the nominated authority.")}
+        {secHdr("2","Initial Triggers","Answer the following questions to identify the relevant triggers and determine the next steps in the assessment.")}
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
             <TableHdr/>
             <tbody>
-              <GateRow num="2.1" fk="s2_1" actFk="s2_1_act"
+              <Row num="2.1" fk="t_newClient"
+                label="Is this a new client?"
+                opts={["Yes","No","Unknown"]}
+                actHint={form.t_newClient==="Yes"?"Client due diligence (Section 4a) will be triggered.":form.t_newClient==="No"?"Client relationship review (Section 4b) will be triggered.":form.t_newClient==="Unknown"?"Check Synergy to confirm, then return to this step.":""}/>
+              <Row num="2.2" fk="t_international"
+                label="Is any part of the project international? (International client, international project location, international travel, or foreign jurisdiction)"
+                opts={["Yes","No","Unknown"]}
+                flagged={isIntl}
+                actHint={isIntl?"International review (Section 5) will be triggered. All international opportunities require review by the International Manager, HSEW Manager, Business Manager and CTO.":"Section 5 will not be displayed."}/>
+              <Row num="2.3" fk="t_highConsequence"
+                label="Does the project involve any high-consequence services? (Tailings, Dam Safety, EoR, Closure, Expert Witness, Independent Review)"
+                opts={["Yes","No","Unknown"]}
+                flagged={isHighConseq}
+                actHint={isHighConseq?"CTO escalation will be included regardless of project location.":""}/>
+              <Row num="2.4" fk="t_feeOver1M"
+                label="Is the estimated fee value greater than $1M? (Pre-populated from FM-01A)"
+                opts={["Yes","No"]}
+                flagged={isFeeOver1M}
+                actHint={isFeeOver1M?"CEO escalation will be included.":"No trigger actioned."}/>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* SECTION 3 — Mandatory Stop / Escalation */}
+      <div style={secBox}>
+        {secHdr("3","Mandatory Stop / Escalation Questions","Applicable for all opportunities. If a mandatory gate question identifies a material concern, or if the response is UNKNOWN, the opportunity cannot proceed without documented review, mitigation and approval by the nominated authority. The remaining sections should still be completed to inform the overall decision.")}
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+            <TableHdr/>
+            <tbody>
+              <Row num="3.1" fk="s3_1" actFk="s3_1_act"
+                opts={["Yes","No","Unknown"]}
                 label="Any actual or perceived Conflict of Interest (COI)?"
-                actHint="If YES or UNKNOWN, COI review and documented mitigation required before proceeding."/>
-              <GateRow num="2.2" fk="s2_2" actFk="s2_2_act"
+                flagged={flags.coi}
+                actHint="If YES or UNKNOWN, COI review and documented mitigation are required before proceeding. The system will flag this response."/>
+              <Row num="3.2" fk="s3_2" actFk="s3_2_act"
+                opts={["Yes","No","Unknown"]}
                 label="Does the engagement involve legal privilege, litigation sensitivity, expert opinion, dispute support, or other matters requiring legal or executive review?"
+                flagged={flags.legal}
                 actHint="If YES or UNKNOWN, obtain legal or executive review before proposal submission."/>
-              <GateRow num="2.3" fk="s2_3" actFk="s2_3_act"
+              <Row num="3.3" fk="s3_3" actFk="s3_3_act"
+                opts={["Yes","No","Unknown"]}
                 label="Is there any identified HSE, legal, reputational, ethical, sanctions, or integrity concern that could reasonably prevent ATC Williams from undertaking the work?"
+                flagged={flags.hse}
                 actHint="If YES or UNKNOWN, escalate to CEO, CTO and Business Manager; include International Manager for international opportunities."/>
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Section 3 — Jurisdictional */}
-      <div style={secBox}>
-        {secHdr("3","Jurisdictional Considerations","All international opportunities require review by the International Manager, HSEW Manager, Business Manager and CTO before proposal submission.")}
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
-            <TableHdr/>
-            <tbody>
-              <GateRow num="3.1" fk="s3_1" actFk="s3_1_act"
-                label="Is this an international project?"
-                actHint="If YES, the International review and approval process is triggered."/>
-              <ScoreRow num="3.2" fk="s3_2"
-                label="Do we have past country experience?"
-                opts={[["10","10 — Australia"],["5","5 — Significant ATCW experience in country"],["2","2 — Some ATCW experience in country"],["0","0 — No ATCW experience in country"]]}/>
-              <ScoreRow num="3.3" fk="s3_3" actFk="s3_3_act"
-                label="If overseas, is this opportunity from a Sanctioned Country?"
-                opts={[["5","5 — N/A (Australia)"],["3","3 — No"],["0","0 — Yes"],["0_unk","0 — UNKNOWN"]]}
-                actHint="For sanctioned countries refer to DFAT consolidated list."/>
-              <ScoreRow num="3.4" fk="s3_4" actFk="s3_4_act"
-                label="Are there any restrictions or statutory requirements (e.g. engineer licensure, onerous contract conditions, in-country partner required)?"
-                opts={[["0","YES — restrictions/requirements identified"],["-0_no","NO — none identified"],["0_unk","UNKNOWN"]]}
-                actHint="If YES, provide details."/>
-              <ScoreRow num="3.5" fk="s3_5" actFk="s3_5_act"
-                label="If overseas, are there any current travel restrictions or warnings (DFAT travel advice)?"
-                opts={[["0","0 — Exercise normal safety precautions"],["-5","-5 — Exercise high degree of caution"],["-10","-10 — Reconsider need to travel"],["-50","-50 — Do not travel"]]}
-                actHint="Review smartraveller.gov.au for destination."/>
-              <ScoreRow num="3.6" fk="s3_6" actFk="s3_6_act"
-                label="If overseas, do we have a local partner?"
-                opts={[["0","0 — Yes, ATCW has a local partner"],["0_nr","0 — No local partner required"],["-5","-5 — No, ATCW does not have a local partner"]]}
-                actHint="If YES, provide details."/>
-              <ScoreRow num="3.7" fk="s3_7" actFk="s3_7_act"
-                label="Are there any known HSE, security, travel, or site safety risks associated with the client, project site, or proposed activities?"
-                opts={[["0","0 — No known concerns"],["-5","-5 — Concerns requiring mitigation"],["-10","-10 — Unacceptable or unmanaged risk"]]}
-                actHint="If concerns exist, document controls and consult HSEW Manager."/>
-            </tbody>
-          </table>
+      {/* SECTION 4a — Client Due Diligence (New Client) */}
+      {(isNewClient||form.t_newClient==="Unknown")&&(
+        <div style={secBox}>
+          {secHdr("4a","Client Due Diligence","Only shown if new client trigger = Yes/Unknown. Answer the following questions to the best of your ability, seeking additional support where needed.","New Client Triggered")}
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+              <TableHdr/>
+              <tbody>
+                <Row num="4.1" fk="s4a_1" actFk="s4a_1_act"
+                  opts={["Yes","No","Unknown"]}
+                  label="Has basic client due diligence been completed? Consider: Credit check, payment history, funding status, litigation history, industry reputation, poor consultant relationships, excessive consultant turnover, or other behaviours suggesting elevated project delivery risk."
+                  flagged={flags.ddNotDone}
+                  actHint="If No or Unknown, due diligence must be completed before proposal submission."/>
+                <Row num="4.2" fk="s4a_2" actFk="s4a_2_act"
+                  opts={["No concerns identified","Minor concerns identified","Known history of disputes or consultant issues","Significant unresolved concerns identified"]}
+                  label="Due diligence outcome (if completed): Credit check, payment history, funding status, litigation history, industry reputation, poor consultant relationships, excessive consultant turnover, or other behaviours suggesting elevated project delivery risk."
+                  flagged={form.s4a_2==="Known history of disputes or consultant issues"||form.s4a_2==="Significant unresolved concerns identified"}
+                  actHint="OM review required for minor concerns. Escalate to OM and Business Manager (or International Manager for international) for known history or significant concerns."/>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Section 4 — Client Relationship */}
-      <div style={secBox}>
-        {secHdr("4","Client Relationship")}
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
-            <TableHdr/>
-            <tbody>
-              <ScoreRow num="4.1" fk="s4_1" actFk="s4_1_act"
-                label="Do we have past experience working for this client?"
-                opts={[["5","5 — Know client well, work with them regularly"],["4","4"],["3","3"],["2","2"],["1","1"],["0","0 — New client"]]}
-                actHint="New clients require due diligence and strategic alignment review."/>
-              <ScoreRow num="4.2" fk="s4_2" actFk="s4_2_act"
-                label="Does client have demonstrable ability and reputation for payment?"
-                opts={[["5","5 — Track record of prompt payment"],["4","4"],["3","3"],["2","2"],["1","1 — Poor track record"],["0","0 — Unknown"]]}
-                actHint="New clients require credit check."/>
-              <ScoreRow num="4.3" fk="s4_3" actFk="s4_3_act"
-                label="Has the client been associated with significant disputes, litigation, poor consultant relationships, excessive turnover, or other elevated delivery risk behaviours?"
-                opts={[["0","0 — No known concerns"],["-2","-2 — Minor concerns"],["-5","-5 — Known history of disputes or issues"],["-10","-10 — Significant unresolved concerns"]]}
-                actHint="Escalate significant concerns to OM and Business Manager."/>
-              <ScoreRow num="4.4" fk="s4_4" actFk="s4_4_act"
-                label="Has the client demonstrated behaviours that may create delivery, commercial, communication, or relationship risk?"
-                opts={[["0","0 — No known concerns"],["-2","-2 — Minor concerns requiring active management"],["-5","-5 — Known concerns"]]}
-                actHint="Document management approach and confirm with OM and Business Manager."/>
-              <ScoreRow num="4.5" fk="s4_5"
-                label="Rate the strength of the relationship with the client and knowledge of key decision makers."
-                opts={[["5","5 — Regular contact with client and key decision makers"],["4","4"],["3","3"],["2","2"],["1","1"],["0","0 — No relationship, unfamiliar with decision makers"]]}/>
-            </tbody>
-          </table>
+      {/* SECTION 4b — Client Relationship (Existing Client) */}
+      {isExisting&&(
+        <div style={secBox}>
+          {secHdr("4b","Client Relationship","Only shown if new client trigger = No. Answer the following questions to the best of your ability, seeking additional support where needed.","Existing Client")}
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+              <TableHdr/>
+              <tbody>
+                <Row num="4.1" fk="s4b_1" actFk="s4b_1_act"
+                  opts={["Track record of prompt payment","Poor track record of payment","Unknown"]}
+                  label="Does the client have demonstrable ability and reputation for payment?"
+                  flagged={flags.payment}
+                  actHint="Flag if poor track record of payment is selected."/>
+                <Row num="4.2" fk="s4b_2" actFk="s4b_2_act"
+                  opts={["No known concerns","Minor concerns","Known history of disputes or consultant issues","Significant unresolved concerns"]}
+                  label="Has the client been associated with significant disputes, litigation, poor consultant relationships, excessive consultant turnover, or other behaviours suggesting elevated project delivery risk?"
+                  flagged={flags.disputes}
+                  actHint="Escalate significant concerns to Operations Manager and Business Manager; escalate to International Manager for international opportunities."/>
+                <Row num="4.3" fk="s4b_3" actFk="s4b_3_act"
+                  opts={["No known concerns","Minor concerns requiring active management","Known concerns"]}
+                  label="Has the client demonstrated behaviours that may create delivery, commercial, communication, or relationship management risk?"
+                  flagged={form.s4b_3==="Known concerns"}
+                  actHint="If concerns are identified, document proposed management approach and confirm with the Operations Manager and Business Manager before proposal submission."/>
+                <Row num="4.4" fk="s4b_4" actFk="s4b_4_act"
+                  opts={["Regular contact with client and key decision makers","No relationship and unfamiliar with key decision makers"]}
+                  label="How is the relationship with the client and the knowledge of key decision makers on the client side?"
+                  flagged={form.s4b_4==="No relationship and unfamiliar with key decision makers"}
+                  actHint="Flag if no relationship and unfamiliar with key decision makers is selected."/>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Section 5 — Market Drivers */}
+      {/* SECTION 5 — International Review (conditional) */}
+      {isIntl&&(
+        <div style={secBox}>
+          {secHdr("5","International Review","Only shown if International Trigger = Yes/Unknown. All international opportunities, including those involving existing clients, require review by the International Manager, HSEW Manager, Business Manager and CTO before proposal submission.","International Triggered")}
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+              <TableHdr/>
+              <tbody>
+                <Row num="5.1" fk="s5_1"
+                  opts={["Australia","International (Select country)"]}
+                  label="Where is the client entity located?"
+                  actHint="Flag if this opportunity is from a sanctioned country."/>
+                <Row num="5.2" fk="s5_2"
+                  opts={["Australia only","International (Select country)","Multiple countries"]}
+                  label="Where will the work be performed?"
+                  actHint="Flag if this opportunity is from a sanctioned country."/>
+                <Row num="5.3" fk="s5_3" actFk="s5_3_act"
+                  opts={["Yes","No"]}
+                  label="Will international travel be required?"
+                  flagged={flags.travelReq}
+                  actHint={flags.travelReq?"Escalate to HSEW Manager. Question 5.5 (travel restrictions) is now required.":"Question 5.5 will not be displayed."}/>
+                <Row num="5.4" fk="s5_4" actFk="s5_4_act"
+                  opts={["Yes","No","Unknown"]}
+                  label="Are there any restrictions or statutory requirements associated with this opportunity? (e.g. engineer licensure in jurisdiction, onerous contract/legal jurisdiction, in-country partner required)"
+                  actHint="If Yes, provide details."/>
+                {flags.travelReq&&(
+                  <Row num="5.5" fk="s5_5" actFk="s5_5_act"
+                    opts={["Exercise normal safety precautions","Exercise high degree of caution","Reconsider need to travel","Do not travel"]}
+                    label="Are there any current travel restrictions or travel warnings in the country and/or project vicinity (DFAT travel advice)?"
+                    flagged={flags.travelRisk}
+                    actHint="Flag if advice is Reconsider need to travel or Do not travel."/>
+                )}
+                <Row num="5.6" fk="s5_6" actFk="s5_6_act"
+                  opts={["Yes","No","Unknown"]}
+                  label="Are there foreign legal, tax or regulatory requirements applicable to this work? (Withholding tax, GST/VAT, permanent establishment risk, local tax registration, or other tax issues)"
+                  actHint="If Yes/Unknown: Refer to the International Operations Manager for contract review before proposal submission."/>
+                <Row num="5.7" fk="s5_7" actFk="s5_7_act"
+                  opts={["Yes, ATCW has a local partner","No local partner required","No, ATCW does not have a local partner"]}
+                  label="Do we have a local partner?"
+                  actHint="If Yes, provide details."/>
+                <Row num="5.8" fk="s5_8" actFk="s5_8_act"
+                  opts={["No known concerns","Concerns requiring mitigation","Unacceptable or unmanaged risk identified"]}
+                  label="Are there any known HSE, security, travel, or site safety risks associated with the client, project site, or proposed activities?"
+                  flagged={flags.hseRisk}
+                  actHint="If concerns exist, document controls and consult HSEW Manager before proposal submission."/>
+                <Row num="5.9" fk="s5_9" actFk="s5_9_act"
+                  opts={["Extensive experience in the country","Some experience in the country","No experience, never worked in the country"]}
+                  label="Does ATCW have experience in the project country?"
+                  flagged={form.s5_9==="No experience, never worked in the country"}
+                  actHint="Flag if no experience in the country is selected."/>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 6 — Market & Strategic Review */}
       <div style={secBox}>
-        {secHdr("5","Market Drivers")}
+        {secHdr("6","Market & Strategic Review","Applicable for all opportunities. Answer the following questions to the best of your ability, seeking additional support where needed.")}
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
             <TableHdr/>
             <tbody>
-              <ScoreRow num="5.1" fk="s5_1"
-                label="Were we tracking this opportunity before the RFP/RFQ was issued?"
-                opts={[["5","5 — YES"],["0","0 — NO"],["0_unk","0 — Unknown"]]}/>
-              <ScoreRow num="5.2" fk="s5_2" actFk="s5_2_act"
-                label="Is this a designated strategic client/project?"
-                opts={[["5","5 — Targeted strategic client/project"],["4","4"],["3","3"],["2","2"],["1","1 — Not a strategic client/project"]]}
-                actHint="Check with OM, Regional Manager and others in the organisation."/>
-              <ScoreRow num="5.3" fk="s5_3"
-                label="Is this a competitive bid?"
-                opts={[["5","5 — Sole source"],["4","4"],["3","3 — Two other bidders"],["2","2"],["1","1 — 5 or more bidders"],["0","0 — Unknown"]]}/>
-              <ScoreRow num="5.4" fk="s5_4" actFk="s5_4_act"
-                label="Is there an incumbent consultant with a material advantage expected to bid for this work?"
-                opts={[["0","0 — No incumbent"],["-1","-1 — Incumbent bidding but relationship appears weak"],["-3","-3 — Strong incumbent advantage"],["-5","-5 — Incumbent has substantial advantage or preferred status"],["-5_unk","-5 — UNKNOWN — Confirm before proceeding"]]}/>
-              <ScoreRow num="5.5" fk="s5_5"
-                label="Technical strength relative to our competitors?"
-                opts={[["5","5 — Exceed competitors' technical ability"],["0","0 — Similar technical experience"],["-5","-5 — Very limited strength/capability"]]}/>
-              <ScoreRow num="5.6" fk="s5_6"
+              <Row num="6.1" fk="s6_1" actFk="s6_1_act"
+                opts={["High value - Targeted strategic client/project","Moderate value","Limited value - Not a strategic client/project"]}
+                label="Does this opportunity provide strategic value beyond the immediate project? (New market entry, strategic client, follow-on work, long-term framework, relationship building)"
+                flagged={form.s6_1==="Limited value - Not a strategic client/project"}
+                actHint="Flag if limited value — not a strategic client/project is selected."/>
+              <Row num="6.2" fk="s6_2"
+                opts={["Sole source","Two other bidders","3 - 5 or more bidders","Unknown"]}
+                label="Is this a competitive bid?"/>
+              <Row num="6.3" fk="s6_3" actFk="s6_3_act"
+                opts={["Significant ATCW experience","Some ATCW experience","None or limited ATCW experience"]}
                 label="Does ATCW have experience on similar projects?"
-                opts={[["5","5 — Significant ATCW experience"],["3","3 — Some ATCW experience"],["0","0 — None or limited ATCW experience"]]}/>
-              <ScoreRow num="5.7" fk="s5_7" actFk="s5_7_act"
-                label="Does the project involve dam(s) or other high-consequence structures?"
-                opts={[["0","0 — No"],["-3","-3 — Review only"],["-5","-5 — Design / Construction / EoR"]]}/>
+                flagged={form.s6_3==="None or limited ATCW experience"}
+                actHint="Flag if none or limited ATCW experience is selected."/>
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Section 6 — Contractual, Financial, Legal and Commercial Risk */}
+      {/* SECTION 7 — Technical & Capability Review */}
       <div style={secBox}>
-        {secHdr("6","Contractual, Financial, Legal and Commercial Risk")}
+        {secHdr("7","Technical & Capability Review","Applicable for all opportunities. Answer the following questions to the best of your ability, seeking additional support where needed.")}
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
             <TableHdr/>
             <tbody>
-              <ScoreRow num="6.1" fk="s6_1" actFk="s6_1_act"
-                label="Identify form of contract."
-                opts={[["5","5 — ATCW Terms & Conditions"],["5_msa","5 — Existing contract (MSA)"],["3","3 — Consult Australia or other standard contract (FIDIC / AS 4122)"],["1","1 — Client-provided contract"],["0","0 — Unknown"]]}
-                actHint="New contracts or new terms require legal review."/>
-              <ScoreRow num="6.2" fk="s6_2"
-                label="Legal jurisdiction (may differ from where work is conducted)?"
-                opts={[["5","5 — Australia"],["3","3 — Other British Law"],["0","0 — Other, including US"]]}/>
-              <ScoreRow num="6.3" fk="s6_3"
-                label="Proportion of project subcontracted?"
-                opts={[["5","5 — No subcontractors"],["3","3 — Subcontractor fees < 50%"],["0","0 — Subcontractor fees > 50%"]]}/>
-              <ScoreRow num="6.4" fk="s6_4"
-                label="Currency for payment?"
-                opts={[["5","5 — AUD"],["3","3 — USD / Euros"],["0","0 — Other"]]}/>
-              <ScoreRow num="6.5" fk="s6_5" actFk="s6_5_act"
-                label="Considering fee basis, liability exposure, payment terms, scope certainty, programme constraints, and delivery obligations — overall commercial risk?"
-                opts={[["5","5 — Low commercial risk using acceptable terms"],["3","3 — Moderate commercial risk requiring management"],["1","1 — Elevated commercial risk"],["0","0 — Unknown or not assessed"],["-5","-5 — High commercial risk"]]}
-                actHint="If commercial risk is uncertain, elevated or significant, escalate to Business Manager."/>
-              <ScoreRow num="6.6" fk="s6_6" actFk="s6_6_act"
-                label="Does the client, project, commodity, jurisdiction, or scope present reputational risk to ATC Williams?"
-                opts={[["0","0 — No identifiable reputational risk"],["-2","-2 — Minor reputational considerations"],["-5","-5 — Reputational risk uncertain or elevated"],["-10","-10 — Significant reputational risk"]]}
-                actHint="If elevated or significant, escalate to CEO, CTO and Business Manager."/>
-              <ScoreRow num="6.7" fk="s6_7"
-                label="Value of project fees?"
-                opts={[["5","5 — > $1M"],["4","4 — > $500k"],["3","3 — > $100k"],["2","2 — > $50k"],["1","1 — > $10k"],["0","0 — < $10k"]]}/>
-              <ScoreRow num="6.8" fk="s6_8" actFk="s6_8_act"
-                label="Is a guarantee required?"
-                opts={[["0","0 — No guarantee required"],["-10","-10 — Unknown"],["-50","-50 — Guarantee required"]]}
-                actHint="If UNKNOWN or guarantee required, refer to Business Manager and CEO before proposal submission."/>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* Section 7 — Staff Resourcing */}
-      <div style={secBox}>
-        {secHdr("7","Staff Resourcing")}
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
-            <TableHdr/>
-            <tbody>
-              <tr style={{borderBottom:`1px solid ${ATC.bg}`}}>
-                <td style={{padding:"10px 12px",color:ATC.crimson,fontWeight:800,fontSize:12,verticalAlign:"top"}}>7.1</td>
-                <td style={{padding:"10px 12px",fontSize:13,color:ATC.textDark,verticalAlign:"top"}}>Proposed Proposal Manager?</td>
-                <td style={{padding:"10px 12px",verticalAlign:"top"}} colSpan={2}>
-                  <select value={form.s7_1||""} onChange={e=>set("s7_1",e.target.value)}
-                    style={{width:"100%",maxWidth:280,padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:form.s7_1?ATC.textDark:ATC.textMuted,background:ATC.bgWhite,outline:"none"}}>
-                    <option value="">Select name...</option>
-                    {STAFF.map(n=><option key={n} value={n}>{n}</option>)}
-                  </select>
-                </td>
-              </tr>
-              <ScoreRow num="7.2" fk="s7_2"
-                label="Experience of Proposal Manager (years)?"
-                opts={[["5","5 — > 20 years"],["4","4 — > 15 years"],["3","3 — > 10 years"],["2","2 — > 5 years"],["1","1 — < 5 years"]]}/>
-              <tr style={{borderBottom:`1px solid ${ATC.bg}`}}>
-                <td style={{padding:"10px 12px",color:ATC.crimson,fontWeight:800,fontSize:12,verticalAlign:"top"}}>7.3</td>
-                <td style={{padding:"10px 12px",fontSize:13,color:ATC.textDark,verticalAlign:"top"}}>Proposed Project Manager?</td>
-                <td style={{padding:"10px 12px",verticalAlign:"top"}} colSpan={2}>
-                  <select value={form.s7_3||""} onChange={e=>set("s7_3",e.target.value)}
-                    style={{width:"100%",maxWidth:280,padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:form.s7_3?ATC.textDark:ATC.textMuted,background:ATC.bgWhite,outline:"none"}}>
-                    <option value="">Select name...</option>
-                    {STAFF.map(n=><option key={n} value={n}>{n}</option>)}
-                  </select>
-                </td>
-              </tr>
-              <ScoreRow num="7.4" fk="s7_4" actFk="s7_4_act"
-                label="Is Proposal Manager and Project Manager the same person?"
-                opts={[["5","5 — YES"],["0","0 — No"]]}
-                actHint="If different, the proposed Project Manager is a mandatory reviewer of the proposal."/>
-              <tr style={{borderBottom:`1px solid ${ATC.bg}`}}>
-                <td style={{padding:"10px 12px",color:ATC.crimson,fontWeight:800,fontSize:12,verticalAlign:"top"}}>7.5</td>
-                <td style={{padding:"10px 12px",fontSize:13,color:ATC.textDark,verticalAlign:"top"}}>Proposed Project Director / Lead Technical Reviewer?</td>
-                <td style={{padding:"10px 12px",verticalAlign:"top"}}>
-                  <select value={form.s7_5||""} onChange={e=>set("s7_5",e.target.value)}
-                    style={{width:"100%",maxWidth:280,padding:"7px 10px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:form.s7_5?ATC.textDark:ATC.textMuted,background:ATC.bgWhite,outline:"none"}}>
-                    <option value="">Select name...</option>
-                    {STAFF.map(n=><option key={n} value={n}>{n}</option>)}
-                  </select>
-                </td>
-                <td style={{padding:"10px 12px",verticalAlign:"top"}}><span style={{fontSize:11,color:ATC.textMuted}}>Project Directors must have ≥ 15 years relevant experience. Mandatory reviewer of the proposal.</span></td>
-              </tr>
-              <GateRow num="7.6" fk="s7_6" actFk="s7_6_act"
-                label="Does the project require an Engineer of Record (EoR), Designer of Record (DoR), Responsible Engineer, or equivalent accountable technical role?"
-                actHint="If YES or UNKNOWN, notify the CTO, relevant Technical Community Lead, OM and Contract Manager for acceptability review before proposal submission."/>
-              <ScoreRow num="7.7" fk="s7_7"
+              <Row num="7.1" fk="s7_1" actFk="s7_1_act"
+                opts={["100% internal personnel","Subconsultant on <10% of project value","Subconsultants in range of 10-30% of project value","Subconsultants in range of 30-50% of project value","Subconsultants for >50% of project value"]}
                 label="Do we have the internal resources to carry out the work?"
-                opts={[["5","5 — 100% internal personnel"],["4","4 — Subconsultant on < 10% of project value"],["3","3 — Subconsultants 10–30% of project value"],["1","1 — Subconsultants 30–50% of project value"],["0","0 — Subconsultants for > 50% of project value"]]}/>
-              <ScoreRow num="7.8" fk="s7_8" actFk="s7_8_act"
+                flagged={flags.lowResources}
+                actHint="Flag if Subconsultants for >50% of project value is selected."/>
+              <Row num="7.2" fk="s7_2" actFk="s7_2_act"
+                opts={["Strong internal capability","Capability exists but requires nominated technical support","Capability gap requires external support","Capability gap not addressed"]}
                 label="Do we have suitably qualified personnel with the technical capability and experience required to deliver the work?"
-                opts={[["10","10 — Strong internal capability"],["5","5 — Capability exists but requires nominated technical support"],["3","3 — Capability gap requires external support"],["0","0 — Capability gap not addressed"]]}
-                actHint="If capability gaps identified, nominate technical support, reviewer or external specialist required."/>
-              <ScoreRow num="7.9" fk="s7_9" actFk="s7_9_act"
-                label="Can suitably qualified staff deliver the work within the required timeframe without creating unacceptable workload or business impacts?"
-                opts={[["5","5 — Readily available"],["3","3 — Manageable constraints"],["2","2 — Significant availability constraints"],["0","0 — Resources unavailable"]]}
-                actHint="Escalate resource conflicts to relevant Operations Managers and Business Manager."/>
+                flagged={flags.capGap}
+                actHint="If capability gaps are identified, nominate the technical support, reviewer, external specialist, or mitigation required before proposal submission."/>
+              <Row num="7.3" fk="s7_3" actFk="s7_3_act"
+                opts={["Readily available","Manageable constraint","Significant availability constraints","Resources unavailable"]}
+                label="Can suitably qualified staff deliver the work within the required timeframe without creating unacceptable workload, utilisation, or business impacts?"
+                flagged={flags.unavail}
+                actHint="Escalate resource conflicts to the relevant Operations Managers. Flag if resources unavailable is selected."/>
+              <Row num="7.4" fk="s7_4" actFk="s7_4_act"
+                opts={["No","Yes - Review only","Yes - Design/construction/EoR]"]}
+                label="Does the project involve dam(s) or other high-consequence structures?"
+                flagged={flags.highConseqStr}
+                actHint="If Yes, flag and escalate to CTO."/>
+              <Row num="7.5" fk="s7_5" actFk="s7_5_act"
+                opts={["Yes","No","Unknown"]}
+                label="Does the project require an Engineer of Record (EoR), Designer of Record (DoR), Responsible Engineer, or equivalent accountable technical role?"
+                flagged={flags.eor}
+                actHint="If YES or UNKNOWN, flag and escalate to the CTO, Operations Manager and Contract Manager for acceptability review before proposal submission."/>
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Preliminary Assessment */}
-      <div style={{...secBox,border:`2px solid ${assessColor}33`,background:assessBg}}>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12}}>
-          <div>
-            <div style={{fontSize:11,fontWeight:800,color:assessColor,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:4}}>Preliminary Assessment</div>
-            <div style={{fontSize:28,fontWeight:900,color:assessColor,letterSpacing:"-0.02em"}}>{assessment}</div>
-            <div style={{fontSize:12,color:assessColor,marginTop:2,opacity:0.8}}>
-              {assessment==="GO"?"Score ≥ 90 — proceed to proposal.":assessment==="REVIEW"?"Score 70–90 — review required before proceeding.":"Score < 70 — do not proceed without escalation."}
-            </div>
-          </div>
-          <div style={{textAlign:"right"}}>
-            <div style={{fontSize:40,fontWeight:900,color:assessColor,lineHeight:1}}>{score}</div>
-            <div style={{fontSize:12,color:assessColor,opacity:0.8}}>of {MAX} points</div>
-            <div style={{marginTop:8,display:"flex",gap:8}}>
-              {[["NO GO","< 70",ATC.crimsonDark],["REVIEW","70–90",ATC.amber],["GO","> 90",ATC.green]].map(([label,range,col])=>(
-                <div key={label} style={{padding:"4px 10px",borderRadius:6,background:assessment===label?"rgba(255,255,255,0.5)":"rgba(255,255,255,0.25)",border:`1px solid ${col}44`,textAlign:"center"}}>
-                  <div style={{fontSize:10,fontWeight:800,color:col}}>{label}</div>
-                  <div style={{fontSize:9,color:col,opacity:0.8}}>{range}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* SECTION 8 — Commercial, Contractual, Financial & Legal */}
+      <div style={secBox}>
+        {secHdr("8","Commercial, Contractual, Financial & Legal Review","Applicable for all opportunities. Answer the following questions to the best of your ability, seeking additional support where needed.")}
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+            <TableHdr/>
+            <tbody>
+              <tr style={{borderBottom:`1px solid ${ATC.bg}`}}>
+                <td style={{padding:"10px 12px",color:ATC.crimson,fontWeight:800,fontSize:12,verticalAlign:"top"}}>8.1</td>
+                <td style={{padding:"10px 12px",fontSize:13,color:ATC.textDark,verticalAlign:"top",width:"38%"}}>Estimated Proposal Preparation Cost</td>
+                <td style={{padding:"10px 12px",verticalAlign:"top",width:"19%"}}>
+                  <Inp fk="s8_1" placeholder="Enter $"/>
+                </td>
+                <td style={{padding:"10px 12px",fontSize:11,color:ATC.textMuted,verticalAlign:"top"}}>The system will calculate the proposal cost percentage by dividing the estimated proposal cost by the total project fees. Flag if greater than 10%.</td>
+              </tr>
+              <Row num="8.2" fk="s8_2" actFk="s8_2_act"
+                opts={[">10%","<=10%"]}
+                label="Expected project margin (%) or profitability"
+                flagged={form.s8_2==="<=10%"}
+                actHint="Flag if less than or equal to 10%."/>
+              <Row num="8.3" fk="s8_3" actFk="s8_3_act"
+                opts={["Low commercial risk using acceptable terms","Moderate commercial risk requiring management","Elevated commercial risk","Unknown or not assessed","High commercial risk"]}
+                label="Considering fee basis, liability exposure, payment terms, scope certainty, programme constraints, and delivery obligations, what is the overall commercial risk?"
+                flagged={flags.highCommercial}
+                actHint="If commercial risk is uncertain, elevated, or significant, provide details and escalate to the Business Manager before proposal submission."/>
+              <Row num="8.4" fk="s8_4" actFk="s8_4_act"
+                opts={["Existing contract (i.e. MSA)","New contract expected","ATCW standard terms expected","No contractual information available"]}
+                label="What contractual information is currently available?"
+                flagged={form.s8_4==="No contractual information available"}
+                actHint="If 'No contract information available' is selected, PMs must provide the client with ATCW's T&Cs as the governing contractual arrangement."/>
+              <Row num="8.5" fk="s8_5" actFk="s8_5_act"
+                opts={["No","Yes – requires review / escalation","Unknown"]}
+                label="Based on the contract information currently available, are there any known contractual requirements that could create material or unacceptable exposure? (Unlimited/disproportionate liability, performance guarantees, bonds, liquidated damages, unusual indemnities, director guarantees, unacceptable insurance requirements)"
+                flagged={flags.contractualExp}
+                actHint="If Yes or Unknown: Describe the issue and required action. Escalate to the Business Manager and CEO before proposal submission."/>
+              <Row num="8.6" fk="s8_6" actFk="s8_6_act"
+                opts={["No identifiable reputational risk","Minor reputational considerations","Reputational risk uncertain or elevated","Significant reputational risk"]}
+                label="Does the client, project, commodity, jurisdiction, or scope present reputational risk to ATC Williams?"
+                flagged={flags.sigReputational}
+                actHint="If reputational risk is uncertain, elevated, or significant, provide details and escalate to the CEO, CTO and Business Manager before proposal submission."/>
+              <Row num="8.7" fk="s8_7" actFk="s8_7_act"
+                opts={["Yes","No","Unknown"]}
+                label="Is Work at Risk expected to be performed as part of this opportunity? (Work at risk means commencing or performing work before an executed contract or purchase order has been received)"
+                flagged={form.s8_7==="Yes"}
+                actHint="If Yes, please make sure that the Work at Risk policy is followed."/>
+            </tbody>
+          </table>
         </div>
-        <p style={{margin:"12px 0 0",fontSize:11,color:assessColor,opacity:0.85}}>
-          The preliminary score is a decision-support tool only. Final approval must consider mandatory gate responses, required escalations, documented mitigations, and approval authority requirements. A high score does not override unresolved COI, legal, HSE, sanctions, integrity, reputational, guarantee, or EoR/DoR concerns.
+      </div>
+
+      {/* SECTION 9 — Escalation Summary (auto-generated) */}
+      <div style={{...secBox,border:`1px solid ${anyFlag?ATC.crimsonDark+"33":ATC.border}`,background:anyFlag?ATC.crimsonPale:ATC.bgWhite}}>
+        {secHdr("9","Escalation Summary","Automatically generated based on triggers. This is a review/comment section only — not an approval requiring signatures. The comments column will be available after the PM has submitted the form.")}
+        <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+          <thead><tr style={{background:ATC.bg,borderBottom:`2px solid ${ATC.border}`}}>
+            {["Specialist Review Required","Reason"].map(h=><th key={h} style={{padding:"9px 12px",textAlign:"left",fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.05em"}}>{h}</th>)}
+          </tr></thead>
+          <tbody>
+            {escalations.map((e,i)=>(
+              <tr key={e.role} style={{borderBottom:`1px solid ${ATC.bg}`,background:i%2===0?ATC.bgWhite:"#FAFAFA"}}>
+                <td style={{padding:"9px 12px",fontWeight:700,color:e.role==="None"?ATC.textMuted:ATC.textDark,fontSize:13,width:"35%"}}>{e.role}</td>
+                <td style={{padding:"9px 12px",fontSize:12,color:ATC.textMid}}>{e.reasons.join("; ")}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p style={{margin:"12px 0 0",fontSize:11,color:ATC.textMuted,fontStyle:"italic"}}>
+          Form submission will email the Operations Manager and specialist reviewers listed above.
         </p>
       </div>
 
-      {/* Approvals */}
+      {/* SECTION 10 — Go/No-Go Decision & Approval */}
       <div style={secBox}>
-        {secHdr("","Approvals / Sign-Off")}
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
-            <thead><tr style={{background:ATC.bg,borderBottom:`2px solid ${ATC.border}`}}>
-              {["Role","Name","Requirement"].map(h=><th key={h} style={{padding:"9px 12px",textAlign:"left",fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.05em"}}>{h}</th>)}
-            </tr></thead>
-            <tbody>
-              {[
-                ["appr_pm","Proposal Manager","Mandatory"],
-                ["appr_projm","Project Manager","Mandatory where different from Proposal Manager"],
-                ["appr_pd","Project Director / Lead Technical Reviewer","Mandatory for technical review"],
-                ["appr_om","Operations Manager","Mandatory"],
-                ["appr_rm","Regional Manager","Required where region-specific approval is needed"],
-                ["appr_intl","International Manager","International opportunities only"],
-                ["appr_hsew","HSEW Manager","Required for international work, site work with known HSE risk, travel restrictions, or elevated site safety concerns"],
-                ["appr_bm","Business Manager","Required for commercial risk, contract departures, subcontracting, currency, payment, guarantee, or significant fee exposure"],
-                ["appr_cto","CTO","Required for strategic, technical, reputational, EoR/DoR, high-consequence, or novel-method risks"],
-                ["appr_ceo","CEO","Required for mandatory gate concerns, guarantee requirements, sanctions/integrity concerns, or significant unresolved legal/reputational risk"],
-              ].map(([fk,role,req],i)=>(
-                <tr key={fk} style={{borderBottom:`1px solid ${ATC.bg}`,background:i%2===0?ATC.bgWhite:"#FAFAFA"}}>
-                  <td style={{padding:"9px 12px",fontWeight:600,color:ATC.textDark,fontSize:13,width:"25%"}}>{role}</td>
-                  <td style={{padding:"9px 12px",width:"25%"}}>
-                    <select value={form[fk]||""} onChange={e=>set(fk,e.target.value)}
-                      style={{width:"100%",padding:"6px 9px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:form[fk]?ATC.textDark:ATC.textMuted,background:ATC.bgWhite,outline:"none"}}>
-                      <option value="">Select name...</option>
-                      {STAFF.map(n=><option key={n} value={n}>{n}</option>)}
-                    </select>
-                  </td>
-                  <td style={{padding:"9px 12px",fontSize:11,color:ATC.textMuted}}>{req}</td>
-                </tr>
+        {secHdr("10","Go / No-Go Decision & Approval","This section must be signed by the Operations Manager and acknowledged by the Proposal Manager. Where an escalation is required, the Operations Manager must consider the input provided by the specialist reviewers; however, the final Go/No Go decision remains with the Operations Manager.")}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+          <div>
+            <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:6}}>Operations Manager Decision</label>
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+              {["Go","Go with conditions","No Go"].map(opt=>(
+                <label key={opt} style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",fontSize:13,color:form.omDecision===opt?ATC.textDark:ATC.textMid,fontWeight:form.omDecision===opt?700:400}}>
+                  <input type="radio" name="omDecision" value={opt} checked={form.omDecision===opt} onChange={e=>set("omDecision",e.target.value)}
+                    style={{accentColor:ATC.crimson,width:14,height:14,cursor:"pointer"}}/>
+                  {opt}
+                </label>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
+          <div>
+            <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:6}}>Comments</label>
+            <Txt fk="omComments" rows={4} placeholder="Operations Manager comments, conditions or rationale..."/>
+          </div>
         </div>
-        <div style={{marginTop:14,padding:"10px 14px",background:ATC.bg,borderRadius:8,fontSize:12,color:ATC.textMid}}>
-          <strong>Final Decision: </strong>
-          <span style={{color:assessColor,fontWeight:700}}>{assessment} (Pending approval / sign-off)</span>
-          {" — "}Score {score} / {MAX}
-        </div>
+        {form.omDecision&&(
+          <div style={{padding:"12px 16px",borderRadius:8,background:omDecBg,border:`1px solid ${omDecColor}33`,marginBottom:16}}>
+            <span style={{fontWeight:800,fontSize:14,color:omDecColor}}>{form.omDecision==="Go"?"GO — Proceed to proposal.":form.omDecision==="Go with conditions"?"GO WITH CONDITIONS — Proceed subject to conditions noted above.":"NO GO — Do not proceed with proposal submission."}</span>
+          </div>
+        )}
+        <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
+          <thead><tr style={{background:ATC.bg,borderBottom:`2px solid ${ATC.border}`}}>
+            {["Role","Name"].map(h=><th key={h} style={{padding:"9px 12px",textAlign:"left",fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.05em"}}>{h}</th>)}
+          </tr></thead>
+          <tbody>
+            {[["appr_om","Operations Manager"],["appr_pm","Proposal Manager"]].map(([fk,role],i)=>(
+              <tr key={fk} style={{borderBottom:`1px solid ${ATC.bg}`,background:i%2===0?ATC.bgWhite:"#FAFAFA"}}>
+                <td style={{padding:"9px 12px",fontWeight:600,color:ATC.textDark,width:"40%"}}>{role}</td>
+                <td style={{padding:"9px 12px",width:"40%"}}>
+                  <select value={form[fk]||""} onChange={e=>set(fk,e.target.value)}
+                    style={{width:"100%",padding:"6px 9px",border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,color:form[fk]?ATC.textDark:ATC.textMuted,background:ATC.bgWhite,outline:"none"}}>
+                    <option value="">Select name...</option>
+                    {STAFF.map(n=><option key={n} value={n}>{n}</option>)}
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Actions */}
