@@ -508,7 +508,7 @@ function QMSFormsNavGroup({active,onNavigate,onClose,isMobile}) {
   );
 }
 
-function Sidebar({active,onNavigate,open,onClose,isMobile,onNewJob}) {
+function Sidebar({active,onNavigate,open,onClose,isMobile,onNewJob,onAdmin}) {
   return <>
     {isMobile&&open&&<div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",zIndex:40}}/>}
     <aside style={{position:"fixed",top:0,left:0,bottom:0,width:236,background:ATC.charcoal,transform:(open||!isMobile)?"translateX(0)":"translateX(-100%)",transition:"transform 0.25s cubic-bezier(.4,0,.2,1)",zIndex:50,display:"flex",flexDirection:"column",overflowY:"auto"}}>
@@ -516,10 +516,13 @@ function Sidebar({active,onNavigate,open,onClose,isMobile,onNewJob}) {
         <ATCLogo width={190}/>
         {isMobile&&<button onClick={onClose} style={{background:"none",border:"none",color:ATC.textMuted,cursor:"pointer",padding:4,marginLeft:6,flexShrink:0}}><X size={16}/></button>}
       </div>
-      {/* New Job Request button */}
-      <div style={{padding:"14px 12px 6px"}}>
-        <button onClick={()=>{onNewJob();if(isMobile)onClose();}} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:8,padding:"9px 12px",borderRadius:7,border:"none",background:ATC.crimson,color:"#fff",cursor:"pointer",fontSize:13,fontWeight:700,boxShadow:`0 2px 8px ${ATC.crimson}44`}}>
-          <Plus size={15}/> New Jobs
+      {/* New Job Request + Admin buttons */}
+      <div style={{padding:"14px 12px 6px",display:"flex",gap:6}}>
+        <button onClick={()=>{onNewJob();if(isMobile)onClose();}} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"9px 8px",borderRadius:7,border:"none",background:ATC.crimson,color:"#fff",cursor:"pointer",fontSize:12,fontWeight:700,boxShadow:`0 2px 8px ${ATC.crimson}44`}}>
+          <Plus size={14}/> New Jobs
+        </button>
+        <button onClick={()=>{if(onAdmin)onAdmin();if(isMobile)onClose();}} style={{flex:"0 0 auto",display:"flex",alignItems:"center",justifyContent:"center",gap:5,padding:"9px 12px",borderRadius:7,border:`1px solid ${ATC.border}`,background:ATC.bgWhite,color:ATC.textMid,cursor:"pointer",fontSize:12,fontWeight:700}}>
+          <Settings size={13}/> Admin
         </button>
       </div>
       <div style={{padding:"10px 20px 6px",fontSize:9,fontWeight:800,color:ATC.crimson,textTransform:"uppercase",letterSpacing:"0.14em"}}>Navigation</div>
@@ -5861,6 +5864,50 @@ function FM19ProjectClosurePage() {
 }
 function FM19NotesPage(){return <NotesPage title="FM-19 Notes" subtitle="Project Closure Notes" data={MOCK_FM19_NOTES}/>;}
 
+// --- Admin Page ---------------------------------------------------------------
+function AdminPage() {
+  const cardStyle={background:ATC.bgWhite,borderRadius:10,border:`1px solid ${ATC.border}`,padding:"20px 24px"};
+  const sections=[
+    {icon:<Users size={20} color={ATC.crimson}/>,title:"User Management",desc:"Manage system users, roles and access permissions.",items:["Add / remove users","Assign roles (Admin, Manager, Reviewer, Read-only)","Reset passwords"]},
+    {icon:<Settings size={20} color={ATC.crimson}/>,title:"System Settings",desc:"Configure global QMS system parameters.",items:["Office locations","Currency and tax rules","Approval thresholds"]},
+    {icon:<FileText size={20} color={ATC.crimson}/>,title:"Form Configuration",desc:"Manage form templates and field settings.",items:["Enable / disable form sections","Mandatory field rules","Default values"]},
+    {icon:<Layers size={20} color={ATC.crimson}/>,title:"Reference Data",desc:"Maintain lookup lists used across all forms.",items:["Service areas","Project types","Commodity list","Staff list"]},
+    {icon:<Activity size={20} color={ATC.crimson}/>,title:"Audit Log",desc:"View system activity and change history.",items:["User login history","Record creation and edits","Approval actions"]},
+    {icon:<AlertTriangle size={20} color={ATC.crimson}/>,title:"Notifications",desc:"Configure system alerts and email notifications.",items:["Approval reminders","Escalation alerts","Deadline warnings"]},
+  ];
+  return (
+    <div>
+      <div style={{marginBottom:24}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+          <div style={{width:4,height:24,background:ATC.crimson,borderRadius:2}}/>
+          <h1 style={{margin:0,fontSize:22,fontWeight:800,color:ATC.textDark,letterSpacing:"-0.02em"}}>Admin</h1>
+          <span style={{padding:"3px 10px",borderRadius:99,background:ATC.crimsonPale,color:ATC.crimsonDark,fontSize:11,fontWeight:700}}>System Administration</span>
+        </div>
+        <p style={{margin:"0 0 0 12px",fontSize:13,color:ATC.textMuted}}>Manage users, settings and reference data for the QMS.</p>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:16}}>
+        {sections.map(s=>(
+          <div key={s.title} style={cardStyle}>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+              <div style={{width:36,height:36,borderRadius:8,background:ATC.crimsonPale,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{s.icon}</div>
+              <div>
+                <div style={{fontWeight:800,fontSize:14,color:ATC.textDark}}>{s.title}</div>
+                <div style={{fontSize:11,color:ATC.textMuted,marginTop:1}}>{s.desc}</div>
+              </div>
+            </div>
+            <ul style={{margin:0,padding:"0 0 0 16px",listStyle:"disc"}}>
+              {s.items.map(item=><li key={item} style={{fontSize:12,color:ATC.textMid,lineHeight:1.8}}>{item}</li>)}
+            </ul>
+            <button style={{marginTop:14,width:"100%",padding:"7px 0",background:ATC.bg,border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,fontWeight:600,color:ATC.textMid,cursor:"pointer"}}>
+              Coming Soon
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // --- App root -----------------------------------------------------------------
 export default function App() {
   const [nav,setNav]=useState("dashboard");
@@ -5875,7 +5922,7 @@ export default function App() {
 
   return (
     <div style={{fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",background:ATC.bg,minHeight:"100vh"}}>
-      <Sidebar active={nav} onNavigate={n=>{setNav(n);setShowForm(false);}} open={sidebarOpen||!isMobile} onClose={()=>setSidebarOpen(false)} isMobile={isMobile} onNewJob={()=>{setShowForm(true);setNav("dashboard");}}/>
+      <Sidebar active={nav} onNavigate={n=>{setNav(n);setShowForm(false);}} open={sidebarOpen||!isMobile} onClose={()=>setSidebarOpen(false)} isMobile={isMobile} onNewJob={()=>{setShowForm(true);setNav("dashboard");}} onAdmin={()=>{setNav("admin");setShowForm(false);}}/>
 
       <header style={{position:"fixed",top:0,left:isMobile?0:236,right:0,height:56,background:ATC.bgWhite,borderBottom:`3px solid ${ATC.crimson}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 22px",zIndex:30,boxShadow:"0 1px 6px rgba(0,0,0,0.07)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
@@ -5995,6 +6042,7 @@ export default function App() {
               {nav==="fm18-notes"       && <FM18NotesPage/>}
               {nav==="fm19"             && <FM19ProjectClosurePage/>}
               {nav==="fm19-notes"       && <FM19NotesPage/>}
+              {nav==="admin"            && <AdminPage/>}
               {!["dashboard","qmsmaster","clientcontacts","opportunities","approvals","clients","sites","qmsforms","fm01a","fm01a-mc","fm01b-notes","fm01b-tasks","fm02","fm02-notes","fm03a","fm03a-notes","fm03b","fm03b-notes","fm04","fm04-notes","fm04-reviewers","fm04-revdocs","fm05","fm05-notes","fm05-scope","fm06","fm06-notes","fm06-milestones","fm06-categories","fm06-deliverables","fm06-extresources","fm07","fm07-main","fm07-notes","fm08","fm08-notes","fm09","fm09-notes","fm10","fm10-notes","fm11","fm11-costItems","fm11-notes","fm12","fm12-notes","fm13","fm13-template","fm13-notes","fm14","fm14-tasks","fm14-notes","fm15","fm15-drawsFigs","fm15-dataLoc","fm15-titleBlock","fm15-notes","fm16","fm16-reviewDocs","fm16-notes","fm17","fm17-docs","fm17-notes","fm18","fm18-uploads","fm18-notes","fm19","fm19-notes"].includes(nav)&&<PlaceholderPage title={NAV_ITEMS.find(n=>n.id===nav)?.label??QMS_FORMS.find(f=>f.id===nav)?.label??""}/>}
             </>
         }
