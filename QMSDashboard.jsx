@@ -5883,7 +5883,7 @@ function AdminPage({onNavigate}) {
             <h1 style={{margin:0,fontSize:22,fontWeight:800,color:ATC.textDark,letterSpacing:"-0.02em"}}>Admin</h1>
             <span style={{padding:"3px 10px",borderRadius:99,background:ATC.crimsonPale,color:ATC.crimsonDark,fontSize:11,fontWeight:700}}>System Administration</span>
           </div>
-          <button onClick={()=>onNavigate&&onNavigate("dashboard")} style={{display:"flex",alignItems:"center",gap:7,padding:"7px 16px",background:ATC.charcoal,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer"}}>
+          <button onClick={()=>onNavigate&&onNavigate("dashboard")} style={{display:"flex",alignItems:"center",gap:7,padding:"7px 16px",background:ATC.crimson,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer"}}>
             <LayoutDashboard size={14}/> QMS Dashboard
           </button>
         </div>
