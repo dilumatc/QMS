@@ -5917,6 +5917,22 @@ function AdminPage({onNavigate}) {
       {/* Admin Responsibility + system sections */}
       <div style={{fontSize:11,fontWeight:700,color:ATC.textMuted,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:12}}>Administration</div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:16}}>
+        {/* QMS Admin page link card */}
+        <div style={cardStyle}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+            <div style={{width:36,height:36,borderRadius:8,background:ATC.crimsonPale,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Lock size={20} color={ATC.crimson}/></div>
+            <div>
+              <div style={{fontWeight:800,fontSize:14,color:ATC.textDark}}>QMS Admin Page</div>
+              <div style={{fontSize:11,color:ATC.textMuted,marginTop:1}}>Access the QMS system administration panel.</div>
+            </div>
+          </div>
+          <ul style={{margin:0,padding:"0 0 0 16px",listStyle:"disc"}}>
+            {["System-wide configuration","Manage data access and settings","Administration tools"].map(item=><li key={item} style={{fontSize:12,color:ATC.textMid,lineHeight:1.8}}>{item}</li>)}
+          </ul>
+          <button onClick={()=>onNavigate&&onNavigate("admin")} style={{marginTop:14,width:"100%",padding:"7px 0",background:ATC.crimson,border:"none",borderRadius:6,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer"}}>
+            Open
+          </button>
+        </div>
         {/* Admin Responsibility — live card */}
         <div style={cardStyle}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
