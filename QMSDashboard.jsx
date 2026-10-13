@@ -1572,7 +1572,6 @@ function DashboardPage({summary,onNewJob,onNavigate,onAdmin}) {
   const [selectedItem,setSelectedItem]=useState(null);
   const [selectedPendItem,setSelectedPendItem]=useState(null);
   const [selectedMasterItem,setSelectedMasterItem]=useState(null);
-  const [showAdminResp,setShowAdminResp]=useState(false);
   const [workbookItem,setWorkbookItem]=useState(null);
   const DASH_PAGE_SIZE=10;
   const filteredOpp=MOCK_OPPORTUNITIES.filter(o=>!oppSearch||
@@ -1602,16 +1601,12 @@ function DashboardPage({summary,onNewJob,onNavigate,onAdmin}) {
   );
 
   return <div>
-    {showAdminResp&&<AdminResponsibilityPage onClose={()=>setShowAdminResp(false)}/>}
     {workbookItem&&<ProjectWorkbookDashboardPage item={workbookItem} onClose={()=>setWorkbookItem(null)}/>}
     {selectedPendItem&&<PendingWorkbookPage item={selectedPendItem} onClose={()=>setSelectedPendItem(null)} onNavigate={onNavigate}/>}
     {selectedMasterItem&&<RecordDetailModal item={selectedMasterItem} onClose={()=>setSelectedMasterItem(null)} onNavigate={onNavigate}/>}
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
       <PageTitle title="QMS"/>
       <div style={{display:"flex",alignItems:"center",gap:8,alignSelf:"flex-start"}}>
-        <button onClick={()=>setShowAdminResp(true)} title="Admin Responsibility" style={{display:"flex",alignItems:"center",justifyContent:"center",width:36,height:36,background:ATC.bgWhite,border:`1.5px solid ${ATC.crimson}`,borderRadius:8,cursor:"pointer",color:ATC.crimson,boxShadow:"0 1px 4px rgba(0,0,0,0.08)"}}>
-          <Settings size={16}/>
-        </button>
         <button onClick={onNewJob} style={{display:"flex",alignItems:"center",gap:7,padding:"9px 20px",background:ATC.crimson,color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 3px 10px ${ATC.crimson}55`}}>
           <Plus size={15}/> New Jobs
         </button>
@@ -5866,6 +5861,7 @@ function FM19NotesPage(){return <NotesPage title="FM-19 Notes" subtitle="Project
 
 // --- Admin Page ---------------------------------------------------------------
 function AdminPage() {
+  const [showAdminResp,setShowAdminResp]=useState(false);
   const cardStyle={background:ATC.bgWhite,borderRadius:10,border:`1px solid ${ATC.border}`,padding:"20px 24px"};
   const sections=[
     {icon:<Users size={20} color={ATC.crimson}/>,title:"User Management",desc:"Manage system users, roles and access permissions.",items:["Add / remove users","Assign roles (Admin, Manager, Reviewer, Read-only)","Reset passwords"]},
@@ -5877,6 +5873,7 @@ function AdminPage() {
   ];
   return (
     <div>
+      {showAdminResp&&<AdminResponsibilityPage onClose={()=>setShowAdminResp(false)}/>}
       <div style={{marginBottom:24}}>
         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
           <div style={{width:4,height:24,background:ATC.crimson,borderRadius:2}}/>
@@ -5886,6 +5883,22 @@ function AdminPage() {
         <p style={{margin:"0 0 0 12px",fontSize:13,color:ATC.textMuted}}>Manage users, settings and reference data for the QMS.</p>
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:16}}>
+        {/* Admin Responsibility — live card */}
+        <div style={cardStyle}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
+            <div style={{width:36,height:36,borderRadius:8,background:ATC.crimsonPale,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><UserCog size={20} color={ATC.crimson}/></div>
+            <div>
+              <div style={{fontWeight:800,fontSize:14,color:ATC.textDark}}>Admin Responsibility</div>
+              <div style={{fontSize:11,color:ATC.textMuted,marginTop:1}}>Manage QMS role assignments and responsibilities.</div>
+            </div>
+          </div>
+          <ul style={{margin:0,padding:"0 0 0 16px",listStyle:"disc"}}>
+            {["View and edit role assignments","Filter by role or user","Track responsibility ownership"].map(item=><li key={item} style={{fontSize:12,color:ATC.textMid,lineHeight:1.8}}>{item}</li>)}
+          </ul>
+          <button onClick={()=>setShowAdminResp(true)} style={{marginTop:14,width:"100%",padding:"7px 0",background:ATC.crimson,border:"none",borderRadius:6,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer"}}>
+            Open
+          </button>
+        </div>
         {sections.map(s=>(
           <div key={s.title} style={cardStyle}>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
