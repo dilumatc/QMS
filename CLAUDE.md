@@ -36,24 +36,27 @@ func start         # http://localhost:7071/api/
 
 ### Frontend — `QMSDashboard.jsx`
 
-Single 2000+ line React component file containing everything: constants, mock data arrays, all page components, and the root `App` component. `main.jsx` is the entry point that mounts `App` into `index.html`.
+Single ~5,400-line React file containing all constants, mock data, page components, and the root `App`. `main.jsx` is the entry point; `index.html` references `/main.jsx` (not `/src/main.jsx`).
 
-**The frontend currently runs entirely on hardcoded mock data.** Inline `MOCK_*` arrays at the top of `QMSDashboard.jsx` supply all table and card data. The `data/` directory contains additional standalone mock JS modules (one per form/entity) that are not yet imported — they are available to wire in when connecting to the real API.
+**App startup flow:**
+1. On load, `localStorage` is read and any previously submitted records are merged into the in-memory mock arrays (lines 16–21).
+2. `App` renders `<LandingPage>` first (`showLanding` state starts `true`). "Enter QMS →" sets it `false`.
+3. The main layout (sidebar + header + content) renders based on `nav` state.
 
-To connect to the real API, set `const BASE_URL = "https://<function-app>.azurewebsites.net/api"` and replace mock data with `useEffect`/`fetch` calls per the pattern in `QMS_README.md`. All API calls require a `?code=<key>` query param or `x-functions-key` header (`AuthorizationLevel.Function`).
+**The frontend runs entirely on hardcoded mock data.** The `data/` directory has standalone mock JS modules (one per form/entity) that are already imported. To connect to the real API, set `const BASE_URL` and replace mock calls with `useEffect`/`fetch` per the pattern in `QMS_README.md`.
 
-Pages rendered by the `App` root based on `nav` state:
+**Form submission (`NewJobForm`)** is wired up: on submit it mutates `MOCK_OPPORTUNITIES` in-memory and writes to `localStorage` so records survive page refresh. It does **not** call the backend API yet.
 
-| `nav` value | Component | Notes |
-|---|---|---|
-| `dashboard` | `DashboardPage` | Summary cards + pending approvals + QMS master table |
-| `qmsmaster` | `QMSMasterPage` | |
-| `clients` | `ClientsPage` | |
-| `clientcontacts` | `ClientContactsPage` | |
-| `sites` | `SitesPage` | |
-| `fm01a / fm02 / fm03a / fm04` | Individual form pages | |
+**Navigation** is driven by a single `nav` string in `App`. All forms follow the pattern `fm<N>` for the primary page and `fm<N>-<tab>` for sub-pages (notes, tasks, reviewers, etc.):
 
-`NewJobForm` (triggered by "New Job Request") currently fakes submission with a 1.2 s delay — it does not call the API.
+| Range | Forms |
+|---|---|
+| Core | `dashboard`, `qmsmaster`, `clients`, `clientcontacts`, `sites`, `qmsforms` |
+| FM-01 | `fm01a`, `fm01a-mc`, `fm01b`, `fm01b-notes`, `fm01b-tasks` |
+| FM-02 – FM-05 | primary + `-notes`; FM-04 also has `-reviewers`, `-revdocs`; FM-05 has `-scope` |
+| FM-06 | `-notes`, `-milestones`, `-categories`, `-deliverables`, `-extresources` |
+| FM-07 – FM-10 | primary + `-main` (FM-07 only) + `-notes` |
+| FM-11 – FM-19 | primary + `-notes`; FM-14 has `-tasks`; FM-15 has `-drawsFigs`, `-dataLoc`, `-titleBlock`; FM-16 has `-reviewDocs`; FM-17 has `-docs`; FM-18 has `-uploads` |
 
 ### Backend — Azure Functions (.NET 8 isolated process)
 
@@ -83,7 +86,7 @@ Pages rendered by the `App` root based on `nav` state:
 
 All paginated responses use `PagedResult<T>` — `items`, `totalCount`, `page`, `pageSize`, `totalPages`, `hasPrev`, `hasNext`. Pagination uses `TotalCount` embedded in the first row returned by each stored procedure.
 
-**Repository pattern:** each repository takes `IDbConnectionFactory` via primary constructor injection, opens a connection per call, and maps results directly to model classes via Dapper. Most reads go through stored procs (`dbo.sp_*`); the approval update and lookup queries use inline SQL.
+**Repository pattern:** each repository takes `IDbConnectionFactory` via primary constructor injection, opens a connection per call, and maps results directly to model classes via Dapper. Most reads use stored procs (`dbo.sp_*`); the approval update and lookup queries use inline SQL.
 
 **Approval workflow:** `PUT /api/opportunities/{id}/approve` accepts `{ approvalField, approved, approvedBy, comments }`. Valid `approvalField` values: `"FM01A"`, `"FM01B"`, `"FM01A_OM"`. Each updates the corresponding status column on `dbo.QMS_Master`.
 
@@ -92,3 +95,11 @@ All paginated responses use `PagedResult<T>` — `items`, `totalCount`, `page`, 
 Run `QMS_Schema.sql` (and `SY_QS_FM_01B.sql` if needed) once against an Azure SQL database. The connection string goes in `local.settings.json` for local dev and in Azure App Settings (via Key Vault reference) for production.
 
 Dashboard summary data comes from `dbo.vw_DashboardSummary` — a view, not a stored procedure.
+
+---
+
+## Key constraints
+
+- `local.settings.json` must never be committed — protected by `.gitignore`.
+- Azure Functions use `AuthorizationLevel.Function` — all API calls require a `?code=<key>` query param or `x-functions-key` header.
+- All API calls require a `?code=<key>` query parameter or `x-functions-key` header.
