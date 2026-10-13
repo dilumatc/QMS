@@ -4080,6 +4080,8 @@ function FM02Form({onBack, prefillData}) {
     s8_1:"",s8_1_act:"", s8_2:"",s8_2_act:"", s8_3:"",s8_3_act:"", s8_4:"",s8_4_act:"", s8_5:"",s8_5_act:"", s8_6:"",s8_6_act:"", s8_7:"",s8_7_act:"",
     // Section 10 — Decision & Approval
     omDecision:"", omComments:"", appr_om:"", appr_pm:"",
+    // Attachments
+    rfpDocuments:[],
   };
   const [form,setForm]=useState(empty);
   const [saving,setSaving]=useState(false);
@@ -4240,6 +4242,38 @@ function FM02Form({onBack, prefillData}) {
         </div>
         <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:4}}>Scope of Work</label>
         <Txt fk="scopeOfWork" rows={4} readOnly={!!prefillData} placeholder="Provide a brief description of the scope of work sufficient to support understanding (minimum 2–3 sentences). Attach the RFP/RFQ and other key documents as appropriate."/>
+        <div style={{marginTop:14}}>
+          <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:6}}>RFP / RFQ</label>
+          <div style={{display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+            <label style={{display:"inline-flex",alignItems:"center",gap:7,padding:"7px 16px",background:ATC.crimson,color:"#fff",borderRadius:7,fontSize:13,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap",boxShadow:`0 2px 6px ${ATC.crimson}33`}}>
+              <FileText size={14}/> Document
+              <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
+                style={{display:"none"}}
+                onChange={e=>{
+                  const files=Array.from(e.target.files).map(f=>({name:f.name,size:f.size,type:f.type}));
+                  set("rfpDocuments",[...(form.rfpDocuments||[]),...files]);
+                  e.target.value="";
+                }}/>
+            </label>
+            <span style={{fontSize:11,color:ATC.textMuted}}>PDF, Word, Excel, PowerPoint or ZIP</span>
+          </div>
+          {(form.rfpDocuments||[]).length>0&&(
+            <div style={{marginTop:8,display:"flex",flexDirection:"column",gap:4}}>
+              {form.rfpDocuments.map((f,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"5px 10px",background:ATC.bg,borderRadius:6,border:`1px solid ${ATC.border}`}}>
+                  <FileText size={13} color={ATC.crimson}/>
+                  <span style={{fontSize:12,color:ATC.textDark,flex:1}}>{f.name}</span>
+                  <span style={{fontSize:11,color:ATC.textMuted}}>{(f.size/1024).toFixed(0)} KB</span>
+                  <button onClick={()=>set("rfpDocuments",form.rfpDocuments.filter((_,j)=>j!==i))}
+                    style={{background:"none",border:"none",cursor:"pointer",padding:2,color:ATC.textMuted,display:"flex",alignItems:"center"}}
+                    title="Remove">
+                    <X size={13}/>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* SECTION 2 — Initial Triggers */}
