@@ -4064,7 +4064,7 @@ function FM02Form({onBack, prefillData}) {
   const fm01a = prefillData ? (MOCK_FM01A.find(f=>f.idMaster===p.id)||{}) : {};
   const empty = {
     // Section 1 — Opportunity Details
-    projectDescriptor:p.projectName||"", client:fm01a.companyName||p.clientName||"", proposalManager:fm01a.projectManager||p.projectManagerName||"", office:p.officeForFormSubmission||"", serviceArea:"", scopeOfWork:fm01a.scopeOfWork||"", estimatedFee:fm01a.estimatedProjectFeeValue||"", projectLocation:fm01a.country||p.siteName||"",
+    projectDescriptor:p.projectName||"", client:fm01a.companyName||p.clientName||"", proposalManager:fm01a.projectManager||p.projectManagerName||"", office:p.officeForFormSubmission||"", projectType:fm01a.projectType||"", scopeOfWork:fm01a.scopeOfWork||"", estimatedFee:fm01a.estimatedProjectFeeValue||"", projectLocation:fm01a.country||p.siteName||"",
     // Section 2 — Initial Triggers
     t_newClient:"", t_international:"", t_highConsequence:"", t_feeOver1M:"",
     // Section 3 — Mandatory Stop / Escalation
@@ -4236,7 +4236,7 @@ function FM02Form({onBack, prefillData}) {
       <div style={secBox}>
         {secHdr("1","Opportunity Details","Pre-populated from FM-01A where available. Refer to the Opportunity Details (Form SY-QS-FM-01A) for additional information.")}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px 20px",marginBottom:14}}>
-          {[["projectDescriptor","Project Descriptor"],["client","Client"],["proposalManager","Proposal Manager"],["office","Office"],["serviceArea","Service Area"],["estimatedFee","Estimated Project Fee Value"],["projectLocation","Project Location / Country"]].map(([fk,label])=>(
+          {[["projectDescriptor","Project Descriptor"],["client","Client"],["proposalManager","Proposal Manager"],["office","Office"],["projectType","Project Type"],["estimatedFee","Estimated Project Fee Value"],["projectLocation","Project Location / Country"]].map(([fk,label])=>(
             <div key={fk}>
               <label style={{fontSize:11,fontWeight:700,color:ATC.textMid,textTransform:"uppercase",letterSpacing:"0.04em",display:"block",marginBottom:4}}>{label}</label>
               <Inp fk={fk} placeholder={`Enter ${label.toLowerCase()}...`} readOnly={!!prefillData}/>
