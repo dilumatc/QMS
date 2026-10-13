@@ -894,7 +894,7 @@ function PendingWorkbookPage({item, onClose, onNavigate}) {
                       const canNav=f.navId&&onNavigate;
                       return(
                         <tr key={f.label} style={{borderBottom:`1px solid ${ATC.bg}`,background:bg,cursor:canNav?"pointer":undefined}}
-                          onClick={canNav?()=>{onClose();onNavigate(f.navId);}:undefined}
+                          onClick={canNav?()=>{onClose();onNavigate(f.navId,item);}:undefined}
                           onMouseEnter={canNav?e=>e.currentTarget.style.background=ATC.crimsonPale:undefined}
                           onMouseLeave={canNav?e=>e.currentTarget.style.background=bg:undefined}>
                           <td style={{padding:"7px 14px",fontWeight:700,color:canNav?ATC.crimson:ATC.textDark,textDecoration:canNav?"underline":undefined,textDecorationStyle:"dotted",textUnderlineOffset:3}}>{f.label}</td>
@@ -4055,11 +4055,12 @@ function FM01APage() {
 }
 
 // --- FM-02 Form (SY-QS-FM-02 Go/No-Go Pre-Proposal Checklist — Focus Group REV A) ---
-function FM02Form({onBack}) {
+function FM02Form({onBack, prefillData}) {
   const STAFF = ["Zoran Kovacev","Colin Jenner","Tony Marszalek","Kathy Tehrani","Alex Arroyo","Dilum Fernando","Ralph Holding","Craig Noske","Peter Reid","Phillip Soden","Mal Jones","Michael Munro","Nick Brown","Rowan Cossins","Dylan Rubinstein","Makaela McGrath","Dayjil Buhle","Joel Eadie"];
+  const p = prefillData||{};
   const empty = {
     // Section 1 — Opportunity Details
-    projectDescriptor:"", client:"", proposalManager:"", office:"", serviceArea:"", scopeOfWork:"", estimatedFee:"", projectLocation:"",
+    projectDescriptor:p.projectName||"", client:p.clientName||"", proposalManager:p.projectManagerName||"", office:p.officeForFormSubmission||"", serviceArea:"", scopeOfWork:"", estimatedFee:"", projectLocation:p.siteName||"",
     // Section 2 — Initial Triggers
     t_newClient:"", t_international:"", t_highConsequence:"", t_feeOver1M:"",
     // Section 3 — Mandatory Stop / Escalation
@@ -4612,14 +4613,14 @@ function FM02Form({onBack}) {
 }
 
 // --- FM-02 Page ---------------------------------------------------------------
-function FM02Page() {
+function FM02Page({prefillItem}) {
   const [page,setPage]=useState(1);
   const [search,setSearch]=useState("");
   const [decisionFilter,setDecisionFilter]=useState("");
   const [showForm,setShowForm]=useState(false);
   const [selItem,setSelItem]=useState(null);
   const masterMap=useMemo(()=>Object.fromEntries(MOCK_OPPORTUNITIES.map(o=>[o.id,o])),[]);
-  if(showForm) return <FM02Form onBack={()=>setShowForm(false)}/>;
+  if(showForm) return <FM02Form onBack={()=>setShowForm(false)} prefillData={prefillItem}/>;
 
   const filtered=MOCK_FM02.filter(o=>{
     const m=masterMap[o.idMaster]||{};
@@ -5840,6 +5841,7 @@ export default function App() {
   const [sidebarOpen,setSidebarOpen]=useState(false);
   const [profileOpen,setProfileOpen]=useState(false);
   const [isMobile,setIsMobile]=useState(window.innerWidth<1024);
+  const [fm02Prefill,setFm02Prefill]=useState(null);
 
   useEffect(()=>{ const fn=()=>setIsMobile(window.innerWidth<1024); window.addEventListener("resize",fn); return ()=>window.removeEventListener("resize",fn); },[]);
   useEffect(()=>{ if(!profileOpen) return; const fn=(e)=>{ if(!e.target.closest("[data-profile]")) setProfileOpen(false); }; document.addEventListener("mousedown",fn); return ()=>document.removeEventListener("mousedown",fn); },[profileOpen]);
@@ -5900,7 +5902,7 @@ export default function App() {
         {showForm
           ? <NewJobForm onBack={()=>setShowForm(false)} isMobile={isMobile}/>
           : <>
-              {nav==="dashboard"    && <DashboardPage summary={MOCK_SUMMARY} onNewJob={()=>setShowForm(true)} onNavigate={setNav}/>}
+              {nav==="dashboard"    && <DashboardPage summary={MOCK_SUMMARY} onNewJob={()=>setShowForm(true)} onNavigate={(navId,data)=>{setNav(navId);if(navId==="fm02")setFm02Prefill(data||null);}}/>}
               {nav==="qmsmaster"    && <QMSMasterPage/>}
               {nav==="clientcontacts"&&<ClientContactsPage isMobile={isMobile}/>}
               {nav==="clients"      && <ClientsPage isMobile={isMobile}/>}
@@ -5911,7 +5913,7 @@ export default function App() {
               {nav==="fm01b"           && <FM01BPage/>}
               {nav==="fm01b-notes"     && <FM01BNotesPage/>}
               {nav==="fm01b-tasks"     && <FM01BTasksPage/>}
-              {nav==="fm02"            && <FM02Page/>}
+              {nav==="fm02"            && <FM02Page prefillItem={fm02Prefill}/>}
               {nav==="fm02-notes"      && <FM02NotesPage/>}
               {nav==="fm03a"           && <FM03APage/>}
               {nav==="fm03a-notes"     && <FM03ANotesPage/>}
