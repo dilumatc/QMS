@@ -4058,9 +4058,10 @@ function FM01APage() {
 function FM02Form({onBack, prefillData}) {
   const STAFF = ["Zoran Kovacev","Colin Jenner","Tony Marszalek","Kathy Tehrani","Alex Arroyo","Dilum Fernando","Ralph Holding","Craig Noske","Peter Reid","Phillip Soden","Mal Jones","Michael Munro","Nick Brown","Rowan Cossins","Dylan Rubinstein","Makaela McGrath","Dayjil Buhle","Joel Eadie"];
   const p = prefillData||{};
+  const fm01a = prefillData ? (MOCK_FM01A.find(f=>f.idMaster===p.id)||{}) : {};
   const empty = {
     // Section 1 — Opportunity Details
-    projectDescriptor:p.projectName||"", client:p.clientName||"", proposalManager:p.projectManagerName||"", office:p.officeForFormSubmission||"", serviceArea:"", scopeOfWork:p.scopeOfWork||"", estimatedFee:p.estimatedProjectFeeValue||"", projectLocation:p.country||"",
+    projectDescriptor:p.projectName||"", client:fm01a.companyName||p.clientName||"", proposalManager:fm01a.projectManager||p.projectManagerName||"", office:p.officeForFormSubmission||"", serviceArea:"", scopeOfWork:fm01a.scopeOfWork||"", estimatedFee:fm01a.estimatedProjectFeeValue||"", projectLocation:fm01a.country||p.siteName||"",
     // Section 2 — Initial Triggers
     t_newClient:"", t_international:"", t_highConsequence:"", t_feeOver1M:"",
     // Section 3 — Mandatory Stop / Escalation
