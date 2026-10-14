@@ -6004,7 +6004,21 @@ export default function App() {
         </div>
       </header>
 
-      <main style={{marginLeft:0,marginTop:56,padding:isMobile?"20px 14px":"28px 32px",minHeight:"calc(100vh - 56px)",background:showForm?"#E8E9ED":undefined}}>
+      <main style={{marginLeft:0,marginTop:56,minHeight:"calc(100vh - 56px)",background:showForm?"#E8E9ED":undefined}}>
+        {/* Sticky close bar — shown on all QMS Form pages */}
+        {!showForm && QMS_FORMS.some(f=>f.id===nav) && (
+          <div style={{position:"sticky",top:0,zIndex:20,background:ATC.crimson,padding:"0 22px",height:40,display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+            <div style={{display:"flex",alignItems:"center",gap:8}}>
+              <div style={{width:3,height:14,background:"rgba(255,255,255,0.55)",borderRadius:2,flexShrink:0}}/>
+              <span style={{color:"#fff",fontSize:12,fontWeight:800,letterSpacing:"0.04em"}}>{QMS_FORMS.find(f=>f.id===nav)?.label??""}</span>
+              <span style={{color:"rgba(255,255,255,0.55)",fontSize:11}}>{QMS_FORMS.find(f=>f.id===nav)?.desc??""}</span>
+            </div>
+            <button onClick={()=>setNav("qmsforms")} style={{height:26,padding:"0 14px",display:"flex",alignItems:"center",gap:6,background:"#fff",border:"none",borderRadius:6,color:ATC.crimson,fontSize:12,fontWeight:700,cursor:"pointer",flexShrink:0}}>
+              <X size={13}/> Close
+            </button>
+          </div>
+        )}
+        <div style={{padding:isMobile?"20px 14px":"28px 32px"}}>
         {showForm
           ? <NewJobForm onBack={()=>setShowForm(false)} isMobile={isMobile}/>
           : <>
@@ -6082,6 +6096,7 @@ export default function App() {
           <ATCLogo width={120}/>
           <span style={{fontSize:11,color:ATC.textMuted}}>(c) 2024 ATC Williams - Quality Management System</span>
         </footer>
+        </div>
       </main>
     </div>
   );
