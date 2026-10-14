@@ -1428,6 +1428,8 @@ function AdminResponsibilityPage({onClose}) {
   const [filterRole, setFilterRole] = useState("All");
   const [filterLoc, setFilterLoc] = useState("All");
   const [form, setForm] = useState(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  useEffect(()=>{ if(!profileOpen) return; const fn=(e)=>{ if(!e.target.closest("[data-ar-profile]")) setProfileOpen(false); }; document.addEventListener("mousedown",fn); return ()=>document.removeEventListener("mousedown",fn); },[profileOpen]);
 
   const visibleLocs = filterLoc==="All" ? AR_LOCATIONS : [filterLoc];
   const visibleRoles = filterRole==="All" ? AR_ROLES : [filterRole];
@@ -1446,8 +1448,46 @@ function AdminResponsibilityPage({onClose}) {
   return (
     <div style={{position:"fixed",inset:0,zIndex:9600,background:"#D4D5D8",display:"flex",flexDirection:"column",overflow:"hidden"}}>
       {/* Top bar — matches app header */}
-      <div style={{background:ATC.bgWhite,borderBottom:`3px solid ${ATC.crimson}`,height:56,display:"flex",alignItems:"center",padding:"0 22px",flexShrink:0}}>
+      <div style={{background:ATC.bgWhite,borderBottom:`3px solid ${ATC.crimson}`,height:56,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 22px",flexShrink:0}}>
         <ATCLogo width={130}/>
+        <div style={{display:"flex",alignItems:"center",gap:16}}>
+          <div style={{position:"relative",cursor:"pointer"}}>
+            <Bell size={18} color={ATC.textMid}/>
+            <span style={{position:"absolute",top:-5,right:-5,background:ATC.crimson,borderRadius:"50%",width:15,height:15,fontSize:9,fontWeight:800,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",border:`2px solid ${ATC.bgWhite}`}}>
+              {MOCK_PENDING.length}
+            </span>
+          </div>
+          <div data-ar-profile="1" style={{position:"relative"}}>
+            <div onClick={()=>setProfileOpen(o=>!o)} style={{display:"flex",alignItems:"center",gap:9,cursor:"pointer",padding:"4px 6px",borderRadius:8,background:profileOpen?ATC.bg:"transparent",transition:"background 0.15s"}}>
+              <div style={{width:31,height:31,borderRadius:"50%",background:ATC.crimson,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:11,fontWeight:800,flexShrink:0}}>DF</div>
+            </div>
+            {profileOpen&&(
+              <div style={{position:"absolute",top:"calc(100% + 8px)",right:0,width:260,background:ATC.bgWhite,borderRadius:10,boxShadow:"0 8px 24px rgba(0,0,0,0.12)",border:`1px solid ${ATC.border}`,zIndex:9800,overflow:"hidden"}}>
+                <div style={{background:ATC.crimson,padding:"16px 18px",display:"flex",alignItems:"center",gap:12}}>
+                  <div style={{width:42,height:42,borderRadius:"50%",background:"rgba(255,255,255,0.25)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:15,fontWeight:800,flexShrink:0}}>DF</div>
+                  <div>
+                    <div style={{color:"#fff",fontSize:14,fontWeight:700,lineHeight:1.2}}>Dilum Fernando</div>
+                    <div style={{color:"rgba(255,255,255,0.75)",fontSize:11,marginTop:3}}>Administrator</div>
+                  </div>
+                </div>
+                <div style={{padding:"12px 18px",borderBottom:`1px solid ${ATC.border}`,display:"flex",alignItems:"center",gap:10}}>
+                  <div style={{width:28,height:28,borderRadius:6,background:ATC.crimsonPale,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={ATC.crimson} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  </div>
+                  <div style={{minWidth:0}}>
+                    <div style={{fontSize:10,fontWeight:700,color:ATC.textMuted,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:2}}>Email</div>
+                    <div style={{fontSize:12,color:ATC.textDark,wordBreak:"break-all"}}>dilumf@atcwilliams.com.au</div>
+                  </div>
+                </div>
+                <div style={{padding:"8px"}}>
+                  <button style={{width:"100%",display:"flex",alignItems:"center",gap:9,padding:"9px 10px",borderRadius:7,border:"none",background:"transparent",color:ATC.textMid,fontSize:13,cursor:"pointer",textAlign:"left"}}>
+                    <LogOut size={14} color={ATC.textMuted}/> Sign out
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       {form&&(
         <div style={{position:"fixed",inset:0,zIndex:9700,background:"rgba(0,0,0,0.45)",display:"flex",alignItems:"center",justifyContent:"center"}}>
