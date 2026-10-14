@@ -3112,7 +3112,7 @@ function NewClientForm({onBack,onSaved,isMobile}) {
 }
 
 // --- Clients Page -------------------------------------------------------------
-function ClientsPage({isMobile}) {
+function ClientsPage({isMobile,onClose}) {
   const [page,setPage]=useState(1);
   const [search,setSearch]=useState("");
   const [showForm,setShowForm]=useState(false);
@@ -3128,9 +3128,12 @@ function ClientsPage({isMobile}) {
     {selectedItem&&<DetailPopupModal onClose={()=>setSelectedItem(null)}><ClientDetail item={selectedItem} isModal onBack={()=>setSelectedItem(null)}/></DetailPopupModal>}
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
       <PageTitle title="Clients" sub={`${filtered.length.toLocaleString()} total clients - ID descending`}/>
-      <button onClick={()=>setShowForm(true)} style={{display:"flex",alignItems:"center",gap:7,padding:"9px 20px",background:ATC.crimson,color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 3px 10px ${ATC.crimson}55`,alignSelf:"flex-start"}}>
-        <Plus size={15}/> New Client
-      </button>
+      <div style={{display:"flex",gap:8,alignSelf:"flex-start"}}>
+        <button onClick={()=>setShowForm(true)} style={{display:"flex",alignItems:"center",gap:7,padding:"9px 20px",background:ATC.crimson,color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 3px 10px ${ATC.crimson}55`}}>
+          <Plus size={15}/> New Client
+        </button>
+        {onClose&&<button onClick={onClose} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",background:ATC.charcoal,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer"}}><X size={13}/> Close</button>}
+      </div>
     </div>
     <SectionTable
       title="All Clients" subtitle={`${filtered.length.toLocaleString()} records`}
@@ -3357,7 +3360,7 @@ function DetailPopupModal({onClose,children}) {
 }
 
 // --- Sites Page ---------------------------------------------------------------
-function SitesPage({isMobile}) {
+function SitesPage({isMobile,onClose}) {
   const PAGE_SIZE=20;
   const [page,setPage]=useState(1);
   const [search,setSearch]=useState("");
@@ -3375,8 +3378,9 @@ function SitesPage({isMobile}) {
     {selectedItem&&<DetailPopupModal onClose={()=>setSelectedItem(null)}>
       <SiteDetail item={selectedItem} isModal onBack={()=>setSelectedItem(null)}/>
     </DetailPopupModal>}
-    <div style={{marginBottom:20}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
       <PageTitle title="QMS Site Names" sub={`${filtered.length.toLocaleString()} sites`}/>
+      {onClose&&<button onClick={onClose} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",background:ATC.crimson,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer",alignSelf:"flex-start"}}><X size={13}/> Close</button>}
     </div>
     <SectionTable
       title="All Sites" subtitle={`${filtered.length.toLocaleString()} records`}
@@ -3622,7 +3626,7 @@ function ClientDetail({item,onBack,isModal}) {
 
 
 // --- QMS Master Page ----------------------------------------------------------
-function QMSMasterPage() {
+function QMSMasterPage({onClose}) {
   const PAGE_SIZE=20;
   const [page,setPage]=useState(1);
   const [search,setSearch]=useState("");
@@ -3645,6 +3649,7 @@ function QMSMasterPage() {
     {selectedItem&&<DetailPopupModal onClose={()=>setSelectedItem(null)}><QMSMasterDetail item={selectedItem} isModal onBack={()=>setSelectedItem(null)}/></DetailPopupModal>}
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
       <PageTitle title="QMS Master" sub={`${filtered.length.toLocaleString()} records - ID descending`}/>
+      {onClose&&<button onClick={onClose} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",background:ATC.crimson,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer",alignSelf:"flex-start"}}><X size={13}/> Close</button>}
     </div>
 
     {/* Filters */}
@@ -3851,7 +3856,7 @@ function NewClientContactForm({onBack,isMobile}) {
   );
 }
 
-function ClientContactsPage({isMobile}) {
+function ClientContactsPage({isMobile,onClose}) {
   const [page,setPage]=useState(1);
   const [search,setSearch]=useState("");
   const [showForm,setShowForm]=useState(false);
@@ -3870,9 +3875,12 @@ function ClientContactsPage({isMobile}) {
     {selectedItem&&<DetailPopupModal onClose={()=>setSelectedItem(null)}><ClientContactDetail item={selectedItem} isModal onBack={()=>setSelectedItem(null)}/></DetailPopupModal>}
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
       <PageTitle title="Client Contacts" sub={`${filtered.length.toLocaleString()} contacts - ID descending`}/>
-      <button onClick={()=>setShowForm(true)} style={{display:"flex",alignItems:"center",gap:7,padding:"9px 20px",background:ATC.crimson,color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 3px 10px ${ATC.crimson}55`,alignSelf:"flex-start"}}>
-        <Plus size={15}/> New Client Contact
-      </button>
+      <div style={{display:"flex",gap:8,alignSelf:"flex-start"}}>
+        <button onClick={()=>setShowForm(true)} style={{display:"flex",alignItems:"center",gap:7,padding:"9px 20px",background:ATC.crimson,color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 3px 10px ${ATC.crimson}55`}}>
+          <Plus size={15}/> New Client Contact
+        </button>
+        {onClose&&<button onClick={onClose} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",background:ATC.charcoal,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer"}}><X size={13}/> Close</button>}
+      </div>
     </div>
 
     <div style={{marginBottom:16}}>
@@ -5061,7 +5069,7 @@ function FM04RevDocsPage() {
 
 // --- Placeholder --------------------------------------------------------------
 // --- QMS Forms Page -----------------------------------------------------------
-function QMSFormsPage({onNavigate}) {
+function QMSFormsPage({onNavigate,onClose}) {
   const formCards = [
     {id:"fm01a", label:"SY-QS-FM-01A", title:"Opportunity Initiation",   desc:"Initiate a new project opportunity. Captures project scope, client details, Gate Zero approval and financial estimates.", icon:Briefcase,    count:200},
     {id:"fm02",  label:"SY-QS-FM-02",  title:"Proposal Assessment",      desc:"Assess and document proposal details including contract type, fee structure and scope verification.",                  icon:FileText,     count:148},
@@ -5071,7 +5079,10 @@ function QMSFormsPage({onNavigate}) {
   ];
   return (
     <div>
-      <PageTitle title="QMS Forms" sub="Quality Management System - Form Register"/>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
+        <PageTitle title="QMS Forms" sub="Quality Management System - Form Register"/>
+        {onClose&&<button onClick={onClose} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",background:ATC.crimson,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer",alignSelf:"flex-start"}}><X size={13}/> Close</button>}
+      </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:16,marginTop:8}}>
         {formCards.map(f=>{
           const Icon=f.icon;
@@ -6011,11 +6022,11 @@ export default function App() {
           ? <NewJobForm onBack={()=>setShowForm(false)} isMobile={isMobile}/>
           : <>
               {nav==="dashboard"    && <DashboardPage summary={MOCK_SUMMARY} onNewJob={()=>setShowForm(true)} onNavigate={(navId,data)=>{setNav(navId);if(navId==="fm02")setFm02Prefill(data||null);}} onAdmin={()=>setNav("admin")}/>}
-              {nav==="qmsmaster"    && <QMSMasterPage/>}
-              {nav==="clientcontacts"&&<ClientContactsPage isMobile={isMobile}/>}
-              {nav==="clients"      && <ClientsPage isMobile={isMobile}/>}
-              {nav==="sites"        && <SitesPage isMobile={isMobile}/>}
-              {nav==="qmsforms"        && <QMSFormsPage onNavigate={setNav}/>}
+              {nav==="qmsmaster"    && <QMSMasterPage onClose={()=>setNav("admin")}/>}
+              {nav==="clientcontacts"&&<ClientContactsPage isMobile={isMobile} onClose={()=>setNav("admin")}/>}
+              {nav==="clients"      && <ClientsPage isMobile={isMobile} onClose={()=>setNav("admin")}/>}
+              {nav==="sites"        && <SitesPage isMobile={isMobile} onClose={()=>setNav("admin")}/>}
+              {nav==="qmsforms"     && <QMSFormsPage onNavigate={setNav} onClose={()=>setNav("admin")}/>}
               {nav==="fm01a"           && <FM01APage/>}
               {nav==="fm01a-mc"        && <FM01AMCPage/>}
               {nav==="fm01b"           && <FM01BPage/>}
