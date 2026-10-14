@@ -5070,48 +5070,35 @@ function FM04RevDocsPage() {
 // --- Placeholder --------------------------------------------------------------
 // --- QMS Forms Page -----------------------------------------------------------
 function QMSFormsPage({onNavigate,onClose}) {
-  const formCards = [
-    {id:"fm01a", label:"SY-QS-FM-01A", title:"Opportunity Initiation",   desc:"Initiate a new project opportunity. Captures project scope, client details, Gate Zero approval and financial estimates.", icon:Briefcase,    count:200},
-    {id:"fm02",  label:"SY-QS-FM-02",  title:"Proposal Assessment",      desc:"Assess and document proposal details including contract type, fee structure and scope verification.",                  icon:FileText,     count:148},
-    {id:"fm03a", label:"SY-QS-FM-03A", title:"Risk Assessment",          desc:"Identify and evaluate project risks, assign risk owners and determine mitigation strategies.",                          icon:AlertTriangle, count:312},
-    {id:"fm04",  label:"SY-QS-FM-04",  title:"Contract Review",          desc:"Review and approve contract terms, purchase orders and client agreements before project commencement.",                 icon:CheckSquare,  count:95},
-    {id:"fm05",  label:"SY-QS-FM-05",  title:"Project Review Plan",      desc:"Manage project review plan including reviewer sign-offs, scope of work items and general notes.",                             icon:Layers,       count:2506},
-  ];
   return (
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20,flexWrap:"wrap",gap:10}}>
-        <PageTitle title="QMS Forms" sub="Quality Management System - Form Register"/>
+        <PageTitle title="QMS Forms" sub="Quality Management System — Form Register"/>
         {onClose&&<button onClick={onClose} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 16px",background:ATC.crimson,border:"none",borderRadius:7,fontSize:12,fontWeight:700,color:"#fff",cursor:"pointer",alignSelf:"flex-start"}}><X size={13}/> Close</button>}
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:16,marginTop:8}}>
-        {formCards.map(f=>{
-          const Icon=f.icon;
-          return (
-            <div key={f.id} onClick={()=>onNavigate(f.id)}
-              style={{background:ATC.bgWhite,borderRadius:10,border:`1px solid ${ATC.border}`,padding:"22px 24px",cursor:"pointer",transition:"all 0.18s",boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
-              {/* Card header */}
-              <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:14}}>
-                <div style={{width:44,height:44,borderRadius:10,background:ATC.crimsonPale,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <Icon size={22} color={ATC.crimson}/>
-                </div>
-                <span style={{padding:"3px 10px",borderRadius:99,background:ATC.blueLight,color:ATC.blue,fontSize:11,fontWeight:700}}>{f.count} records</span>
-              </div>
-              {/* Form code */}
-              <div style={{fontSize:11,fontWeight:800,color:ATC.crimson,letterSpacing:"0.06em",marginBottom:4}}>{f.label}</div>
-              {/* Title */}
-              <div style={{fontSize:15,fontWeight:800,color:ATC.textDark,marginBottom:8,lineHeight:1.3}}>{f.title}</div>
-              {/* Description */}
-              <p style={{margin:0,fontSize:12,color:ATC.textMuted,lineHeight:1.5}}>{f.desc}</p>
-              {/* Footer */}
-              <div style={{marginTop:16,paddingTop:14,borderTop:`1px solid ${ATC.border}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                <span style={{fontSize:12,color:ATC.textMid,fontWeight:500}}>View records</span>
-                <div style={{width:28,height:28,borderRadius:6,background:ATC.crimson,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-                </div>
-              </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(320px,1fr))",gap:16}}>
+        {QMS_FORM_GROUPS.map(group=>(
+          <div key={group.id} style={{background:ATC.bgWhite,borderRadius:10,border:`1px solid ${ATC.border}`,overflow:"hidden",boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
+            {/* Group header */}
+            <div style={{background:ATC.crimson,padding:"10px 16px",display:"flex",alignItems:"center",gap:8}}>
+              <div style={{width:3,height:14,background:"rgba(255,255,255,0.6)",borderRadius:2,flexShrink:0}}/>
+              <span style={{color:"#fff",fontSize:12,fontWeight:800,letterSpacing:"0.04em"}}>{group.label}</span>
             </div>
-          );
-        })}
+            {/* Items */}
+            <div>
+              {group.items.map((item,i)=>(
+                <button key={item.id} onClick={()=>onNavigate(item.id)}
+                  style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",background:"transparent",border:"none",borderTop:i===0?"none":`1px solid ${ATC.border}`,cursor:"pointer",textAlign:"left",gap:12}}>
+                  <div>
+                    <div style={{fontSize:12,fontWeight:700,color:ATC.textDark}}>{item.label}</div>
+                    <div style={{fontSize:11,color:ATC.textMuted,marginTop:1}}>{item.desc}</div>
+                  </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={ATC.crimson} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
