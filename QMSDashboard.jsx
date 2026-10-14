@@ -5865,14 +5865,6 @@ function AdminPage({onNavigate}) {
     {id:"sites",         icon:<MapPin size={20} color={ATC.crimson}/>,    title:"QMS Site Names",  desc:"Manage site names and locations used across QMS forms.",        items:["Site name register","Site location details","Site code management"]},
     {id:"qmsforms",      icon:<FileText size={20} color={ATC.crimson}/>,  title:"QMS Forms",       desc:"Access all QMS form registers (FM-01 through FM-19).",          items:["All form registers","Form status overview","Quick navigation to any form"]},
   ];
-  const comingSoon=[
-    {icon:<UserCog size={20} color={ATC.crimson}/>,title:"User Management",desc:"Manage system users, roles and access permissions.",items:["Add / remove users","Assign roles (Admin, Manager, Reviewer, Read-only)","Reset passwords"]},
-    {icon:<Settings size={20} color={ATC.crimson}/>,title:"System Settings",desc:"Configure global QMS system parameters.",items:["Office locations","Currency and tax rules","Approval thresholds"]},
-    {icon:<FileText size={20} color={ATC.crimson}/>,title:"Form Configuration",desc:"Manage form templates and field settings.",items:["Enable / disable form sections","Mandatory field rules","Default values"]},
-    {icon:<Layers size={20} color={ATC.crimson}/>,title:"Reference Data",desc:"Maintain lookup lists used across all forms.",items:["Service areas","Project types","Commodity list","Staff list"]},
-    {icon:<Activity size={20} color={ATC.crimson}/>,title:"Audit Log",desc:"View system activity and change history.",items:["User login history","Record creation and edits","Approval actions"]},
-    {icon:<AlertTriangle size={20} color={ATC.crimson}/>,title:"Notifications",desc:"Configure system alerts and email notifications.",items:["Approval reminders","Escalation alerts","Deadline warnings"]},
-  ];
   return (
     <div>
       {showAdminResp&&<AdminResponsibilityPage onClose={()=>setShowAdminResp(false)}/>}
@@ -5949,23 +5941,6 @@ function AdminPage({onNavigate}) {
             Open
           </button>
         </div>
-        {comingSoon.map(s=>(
-          <div key={s.title} style={cardStyle}>
-            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
-              <div style={{width:36,height:36,borderRadius:8,background:ATC.crimsonPale,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{s.icon}</div>
-              <div>
-                <div style={{fontWeight:800,fontSize:14,color:ATC.textDark}}>{s.title}</div>
-                <div style={{fontSize:11,color:ATC.textMuted,marginTop:1}}>{s.desc}</div>
-              </div>
-            </div>
-            <ul style={{margin:0,padding:"0 0 0 16px",listStyle:"disc"}}>
-              {s.items.map(item=><li key={item} style={{fontSize:12,color:ATC.textMid,lineHeight:1.8}}>{item}</li>)}
-            </ul>
-            <button style={{marginTop:14,width:"100%",padding:"7px 0",background:ATC.bg,border:`1px solid ${ATC.border}`,borderRadius:6,fontSize:12,fontWeight:600,color:ATC.textMid,cursor:"pointer"}}>
-              Coming Soon
-            </button>
-          </div>
-        ))}
       </div>
     </div>
   );
