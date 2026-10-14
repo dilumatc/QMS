@@ -5959,7 +5959,9 @@ export default function App() {
     <div style={{fontFamily:"'Inter','Helvetica Neue',Arial,sans-serif",background:ATC.bg,minHeight:"100vh"}}>
       <header style={{position:"fixed",top:0,left:0,right:0,height:56,background:ATC.bgWhite,borderBottom:`3px solid ${ATC.crimson}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 22px",zIndex:30,boxShadow:"0 1px 6px rgba(0,0,0,0.07)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <ATCLogo width={130}/>
+          <button onClick={()=>{setNav("dashboard");setShowForm(false);}} style={{background:"none",border:"none",padding:0,cursor:"pointer",display:"flex",alignItems:"center"}}>
+            <ATCLogo width={130}/>
+          </button>
         </div>
         <div style={{display:"flex",alignItems:"center",gap:16}}>
           <div style={{position:"relative",cursor:"pointer"}}>
