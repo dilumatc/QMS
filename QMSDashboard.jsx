@@ -1445,6 +1445,10 @@ function AdminResponsibilityPage({onClose}) {
 
   return (
     <div style={{position:"fixed",inset:0,zIndex:9600,background:"#D4D5D8",display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      {/* Top bar — matches app header */}
+      <div style={{background:ATC.bgWhite,borderBottom:`3px solid ${ATC.crimson}`,height:56,display:"flex",alignItems:"center",padding:"0 22px",flexShrink:0}}>
+        <ATCLogo width={130}/>
+      </div>
       {form&&(
         <div style={{position:"fixed",inset:0,zIndex:9700,background:"rgba(0,0,0,0.45)",display:"flex",alignItems:"center",justifyContent:"center"}}>
           <div style={{background:"#fff",borderRadius:12,width:440,boxShadow:"0 20px 60px rgba(0,0,0,0.3)",overflow:"hidden"}}>
